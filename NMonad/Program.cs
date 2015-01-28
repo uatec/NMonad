@@ -100,8 +100,6 @@ namespace NMonad
         {
             try
             {
-                log.InfoFormat("Using layout {0}", layout.GetType().Name);
-
                 string[] ignoredWindows = new[]
                 {
                     "Program Manager",
@@ -151,7 +149,6 @@ namespace NMonad
                 int screenIndex = 0;
                 foreach (var windowGroup in windowGroups)
                 {
-                    log.DebugFormat("Screen {0}", screenIndex);
                     layout.ReflowScreen(Screen.AllScreens[screenIndex++], windowGroup);
                 }
 
