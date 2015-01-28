@@ -3,13 +3,30 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
+using NHotkey.WindowsForms;
+using Timer = System.Threading.Timer;
 
 namespace NMonad
 {
     class Program
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        static void Main(string[] args)
+
+        private static void Main(string[] args)
+        {
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            var applicationContext = new NMonadApplicationContext();
+
+            HotkeyManager.Current.AddOrReplace("Run", Keys.Control | Keys.Alt | Keys.Space, (s, a) => Run());
+            
+            Timer t = new Timer(state => Run(), null, 0, 100);
+            Application.Run(applicationContext);
+            t.Dispose();
+
+        }
+
+        private static void Run()
         {
             try
             {
