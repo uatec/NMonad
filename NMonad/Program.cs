@@ -16,6 +16,8 @@ namespace NMonad
         private static List<Layout> _layouts = new List<Layout>();
         private static int selectedLayout = 0;
 
+        private static List<Window> _windows = new List<Window>();
+
         private static Layout layout
         {
             get { return _layouts[selectedLayout]; }
@@ -88,8 +90,8 @@ namespace NMonad
                     "LockHunter"
                 };
 
-                List<IntPtr> windowHandles = new List<IntPtr>();
-                foreach ( IntPtr ptr in Win32.FindWindowsWithText(""))
+                List<IntPtr> existingWindowHandles = new List<IntPtr>();
+                foreach (IntPtr ptr in Win32.FindWindowsWithText(""))
                 {
                     string windowName = Win32.GetWindowText(ptr);
                     if (string.IsNullOrEmpty(windowName)) continue;
@@ -98,18 +100,32 @@ namespace NMonad
                     if (Win32.IsIconic(ptr)) continue;
                     if (WindowsIsSmall(ptr)) continue;
 
-                    windowHandles.Add(ptr);
+                    existingWindowHandles.Add(ptr);
                 }
+
+                var oldWindows = _windows.Select(w => w.Handle).Except(existingWindowHandles).ToList();
+                var newWindows = existingWindowHandles.Except(_windows.Select(w => w.Handle)).ToList();
+
+                foreach (var w in newWindows)
+                {
+                    _windows.Add(new Window
+                    {
+                        Handle = w,
+                        Name = Win32.GetWindowText(w)
+                    });
+                }
+
+                foreach (var w in oldWindows)
+                {
+                    var removedWindow = _windows.Single(w1 => w1.Handle == w);
+                    _windows.Remove(removedWindow);
+                }  
+
                 int screenCount = Screen.AllScreens.Count();
 
-                var windowGroups = windowHandles.Select((x, i) => new {Index = i, Value = x})
-                    .GroupBy(x => x.Index%screenCount)
-                    .Select(x => x.Select(v =>
-                        new Window
-                        {
-                            Handle = v.Value,
-                            Name = Win32.GetWindowText(v.Value)
-                        }).ToList());
+                IEnumerable<List<Window>> windowGroups = _windows.Select((x, i) => Tuple.Create(i, x))
+                                  .GroupBy(x => x.Item1 % screenCount)
+                                  .Select(x => x.Select(y => y.Item2).ToList());
 
                 int screenIndex = 0;
                 foreach (var windowGroup in windowGroups)
