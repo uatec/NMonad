@@ -39,8 +39,6 @@ namespace NMonad
                     new FullscreenLayout()
                 });
             
-            HotkeyManager.Current.AddOrReplace("Run", Keys.Control | Keys.Alt | Keys.R, (s, a) => Run());
-            
             HotkeyManager.Current.AddOrReplace("CycleLayouts", Keys.Control | Keys.Alt | Keys.Space, cycleLayouts);
             HotkeyManager.Current.AddOrReplace("ReverseCycleLayouts", Keys.Control | Keys.Alt | Keys.Shift | Keys.Space, reverseCycleLayouts);
             
