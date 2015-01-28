@@ -106,7 +106,9 @@ namespace NMonad
                     "Start", 
                     "Start menu",
                     "Task Switching",
-                    "LockHunter"
+                    "LockHunter",
+                    "Razer Configurator",
+                    "Microsoft OneNote 2013 - Windows taskbar"
                 };
 
                 List<IntPtr> existingWindowHandles = new List<IntPtr>();
