@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using NHotkey.WindowsForms;
@@ -83,6 +84,7 @@ namespace NMonad
                     if (ignoredWindows.Any(w => -1 < windowName.IndexOf(w, StringComparison.CurrentCultureIgnoreCase))) continue;
                     if (!Win32.IsWindowVisible(ptr)) continue;
                     if (Win32.IsIconic(ptr)) continue;
+                    if (WindowsIsSmall(ptr)) continue;
 
                     windowHandles.Add(ptr);
                 }
@@ -109,7 +111,22 @@ namespace NMonad
             {
                 log.Fatal("unhandled fatal exception", ex);
             }
+        }
 
+
+        private static bool WindowsIsSmall(IntPtr handle)
+        {
+            // First we intialize an empty Rectangle object.
+            Rectangle rect = new Rectangle();
+
+            // Then we call the GetWindowRect function, passing in a reference to the rect object.
+            Win32.GetWindowRect(handle, ref rect);
+
+            // Threshold is hardcoded here cos i cba to drive it from config yet
+            Size threshold = new Size(700, 450);
+            // the rectangle we just got back returns the Right position in the Width field, subtract X to get the window width.
+            // same for Y axis
+            return rect.Width - rect.X < threshold.Width && rect.Height - rect.Y < threshold.Height;
         }
     }
 }
