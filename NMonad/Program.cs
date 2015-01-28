@@ -169,7 +169,7 @@ namespace NMonad
             Win32.GetWindowRect(handle, ref rect);
 
             // Threshold is hardcoded here cos i cba to drive it from config yet
-            Size threshold = new Size(700, 450);
+            Size threshold = new Size(650, 450);
             // the rectangle we just got back returns the Right position in the Width field, subtract X to get the window width.
             // same for Y axis
             return rect.Width - rect.X < threshold.Width && rect.Height - rect.Y < threshold.Height;
