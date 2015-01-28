@@ -23,7 +23,20 @@ namespace NMonad
 
         protected void SetWindowPosition(Window window, Rectangle windowPosition)
         {
-            
+            Rectangle rect = new Rectangle();
+
+            // Then we call the GetWindowRect function, passing in a reference to the rect object.
+            Win32.GetWindowRect(window.Handle, ref rect);
+
+            // If the window is already in the right position, let's not fuck with it
+            if (windowPosition.X == rect.X &&
+                windowPosition.Y == rect.Y &&
+                windowPosition.Width == rect.Width - rect.X && // include the hack to fix the fact that Width is the Right position, not the X
+                windowPosition.Height == rect.Height - rect.Y) // and for Y
+            {
+                return;
+            }
+
             if (Win32.IsZoomed(window.Handle))
             {
                 Win32.ShowWindowAsync(window.Handle, ShowWindowCommands.Normal);
@@ -53,6 +66,13 @@ namespace NMonad
                         break;
                 }
             }
+
+
+            // update our record of the window to remember the position we have just put it in
+            window.X = windowPosition.X;
+            window.Y = windowPosition.Y;
+            window.Width = windowPosition.Width;
+            window.Height = windowPosition.Height;
         }
         
     }

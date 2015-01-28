@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -7,6 +8,15 @@ namespace NMonad
 {
     public class Win32
     {
+
+        // The GetWindowRect function takes a handle to the window as the first parameter. The second parameter
+        // must include a reference to a Rectangle object. This Rectangle object will then have it's values set
+        // to the window rectangle properties.
+        [DllImport("user32.dll")]
+        public static extern long GetWindowRect(IntPtr hWnd, ref Rectangle lpRect);
+
+
+
         [DllImport("Kernel32.dll")]
         public static extern uint GetLastError();
 
