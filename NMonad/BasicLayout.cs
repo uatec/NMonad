@@ -37,12 +37,7 @@ namespace NMonad
                     int ypos = screen.WorkingArea.Top + y;
                     int windowWidth = colWidth;
                     int windowHeight = cellHeight;
-
-                    if (Win32.IsZoomed(window.Handle))
-                    {
-                        Win32.ShowWindowAsync(window.Handle, ShowWindowCommands.Normal);
-                    }
-
+                    
                     log.DebugFormat("x: {0}, y: {1}, w: {2}, h: {3}", xpos, ypos, windowWidth, windowHeight);
 
                     base.SetWindowPosition(window, new Rectangle(xpos, ypos, windowWidth, windowHeight));

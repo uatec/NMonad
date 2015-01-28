@@ -23,6 +23,12 @@ namespace NMonad
 
         protected void SetWindowPosition(Window window, Rectangle windowPosition)
         {
+            
+            if (Win32.IsZoomed(window.Handle))
+            {
+                Win32.ShowWindowAsync(window.Handle, ShowWindowCommands.Normal);
+            }
+
             UFlags flags = 0;
             var success = Win32.SetWindowPos(window.Handle,
                 0,
