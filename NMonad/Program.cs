@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Newtonsoft.Json;
 using NHotkey.WindowsForms;
 using Timer = System.Threading.Timer;
 
@@ -49,12 +50,17 @@ namespace NMonad
             HotkeyManager.Current.AddOrReplace("IncreaseMainPane", Keys.Control | Keys.Alt | Keys.H, increaseMainPane);
             HotkeyManager.Current.AddOrReplace("DecreaseMainPane", Keys.Control | Keys.Alt | Keys.Shift | Keys.H, decreaseMainPane);
 
+            HotkeyManager.Current.AddOrReplace("DumpWindowList", Keys.Control | Keys.Alt | Keys.K, dumpWindowList);
             
             Timer t = new Timer(state => Run(), null, 0, 100);
             Application.Run(applicationContext);
             t.Dispose();
         }
-
+        private static void dumpWindowList(object sender, EventArgs eventArgs)
+        {
+            log.InfoFormat("CurrentWindows: {0}", JsonConvert.SerializeObject(_windows));
+        }
+        
         private static void reverseCycleLayouts(object sender, EventArgs eventArgs)
         {
             selectedLayout += 1;
