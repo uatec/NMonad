@@ -40,6 +40,10 @@ namespace NMonad
             
             HotkeyManager.Current.AddOrReplace("CycleLayouts", Keys.Control | Keys.Alt | Keys.Space, cycleLayouts);
             HotkeyManager.Current.AddOrReplace("ReverseCycleLayouts", Keys.Control | Keys.Alt | Keys.Shift | Keys.Space, reverseCycleLayouts);
+
+            HotkeyManager.Current.AddOrReplace("IncreaseMainPane", Keys.Control | Keys.Alt | Keys.H, increaseMainPane);
+            HotkeyManager.Current.AddOrReplace("DecreaseMainPane", Keys.Control | Keys.Alt | Keys.Shift | Keys.H, decreaseMainPane);
+
             
             Timer t = new Timer(state => Run(), null, 0, 100);
             Application.Run(applicationContext);
@@ -60,7 +64,15 @@ namespace NMonad
             log.InfoFormat("Selected: {0}", layout.GetType().Name);
         }
 
-        
+        private static void increaseMainPane(object sender, EventArgs eventArgs)
+        {
+            layout.MainPaneSize *= 1.1f;
+        }
+        private static void decreaseMainPane(object sender, EventArgs eventArgs)
+        {
+            layout.MainPaneSize /= 1.1f;
+        }
+
         private static void Run()
         {
             try
