@@ -42,6 +42,9 @@ namespace NMonad
             
             HotkeyManager.Current.AddOrReplace("CycleLayouts", Keys.Control | Keys.Alt | Keys.Space, cycleLayouts);
             HotkeyManager.Current.AddOrReplace("ReverseCycleLayouts", Keys.Control | Keys.Alt | Keys.Shift | Keys.Space, reverseCycleLayouts);
+            
+            HotkeyManager.Current.AddOrReplace("CycleMainWindow", Keys.Control | Keys.Alt | Keys.J, cycleMainPane);
+            HotkeyManager.Current.AddOrReplace("ReverseCycleMainWindow", Keys.Control | Keys.Alt | Keys.Shift | Keys.J, reverseCycleMainPane);
 
             HotkeyManager.Current.AddOrReplace("IncreaseMainPane", Keys.Control | Keys.Alt | Keys.H, increaseMainPane);
             HotkeyManager.Current.AddOrReplace("DecreaseMainPane", Keys.Control | Keys.Alt | Keys.Shift | Keys.H, decreaseMainPane);
@@ -73,6 +76,20 @@ namespace NMonad
         private static void decreaseMainPane(object sender, EventArgs eventArgs)
         {
             layout.MainPaneSize /= 1.1f;
+        }
+
+        private static void cycleMainPane(object sender, EventArgs eventArgs)
+        {
+            var lastWindow = _windows.Last();
+            _windows.Remove(lastWindow);
+            _windows.Insert(0, lastWindow);
+        }
+
+        private static void reverseCycleMainPane(object sender, EventArgs eventArgs)
+        {
+            var firstWindow = _windows.First();
+            _windows.RemoveAt(0);
+            _windows.Add(firstWindow);
         }
 
         private static void Run()
