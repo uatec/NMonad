@@ -59,7 +59,18 @@ namespace NMonad
 
             HotkeyManager.Current.AddOrReplace("DumpWindowList", Keys.Control | Keys.Alt | Keys.K, dumpWindowList);
             
-            Timer t = new Timer(state => Run(), null, 0, 100);
+            HotkeyManager.Current.AddOrReplace("DumpWindowList", Keys.Control | Keys.Alt | Keys.Q, (s, e) => applicationContext.ExitThread());
+
+            object o = new object();
+
+            Timer t = new Timer(state =>
+            {
+                if (Monitor.TryEnter(o, 100))
+                {
+                    Run();
+                    Monitor.Exit(o);
+                }
+            }, null, 0, 100);
             Application.Run(applicationContext);
             t.Dispose();
         }
