@@ -149,7 +149,8 @@ namespace NMonad
                 {
                     string windowName = Win32.GetWindowText(ptr);
                     if (string.IsNullOrEmpty(windowName)) continue;
-                    if (ignoredWindows.Any(w => -1 < windowName.IndexOf(w, StringComparison.CurrentCultureIgnoreCase))) continue;
+                    //if (ignoredWindows.Any(w => -1 < windowName.IndexOf(w, StringComparison.CurrentCultureIgnoreCase))) continue;
+                    if (ignoredWindows.Contains(windowName)) continue;
                     if (!Win32.IsWindowVisible(ptr)) continue;
                     if (Win32.IsIconic(ptr)) continue;
                     if (WindowsIsSmall(ptr)) continue;
