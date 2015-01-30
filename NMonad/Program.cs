@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Text;
 using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 using NHotkey.WindowsForms;
@@ -144,7 +147,7 @@ namespace NMonad
                     "Open"
                 };
 
-                List<IntPtr> existingWindowHandles = new List<IntPtr>();
+                List<IntPtr> extantWindowHandles = new List<IntPtr>();
                 foreach (IntPtr ptr in Win32.FindWindowsWithText(""))
                 {
                     string windowName = Win32.GetWindowText(ptr);
@@ -155,18 +158,52 @@ namespace NMonad
                     if (Win32.IsIconic(ptr)) continue;
                     if (WindowsIsSmall(ptr)) continue;
 
-                    existingWindowHandles.Add(ptr);
+                    extantWindowHandles.Add(ptr);
                 }
 
-                var oldWindows = _windows.Select(w => w.Handle).Except(existingWindowHandles).ToList();
-                var newWindows = existingWindowHandles.Except(_windows.Select(w => w.Handle)).ToList();
+                var knownHandles = _windows.Select(w => w.Handle).ToList();
+                var oldWindows = knownHandles.Except(extantWindowHandles).ToList();
+                var newWindows = extantWindowHandles.Except(knownHandles).ToList();
 
                 foreach (var w in newWindows)
                 {
+                    string windowName = Win32.GetWindowText(w);
+                    // Assign this window to screen 0, or the next screen that doesn't have anything assigned
+                    int screenId = _windows.Any() ? _windows.Max(x => x.ScreenId) + 1 : 0;
+
+                    // if we have tried to assign it to a screen that doesn't exist
+                    Dictionary<int, int> screenWindowCounts = new Dictionary<int, int>();
+                    if (screenId >= Screen.AllScreens.Length)
+                    {
+
+                        // figure out how many windows each screen has
+                        // create entries for all screens that default to zero
+                        for (int i = 0; i < Screen.AllScreens.Length; i++)
+                        {
+                            screenWindowCounts[i] = 0;
+                        }
+                        // then update the ones that have windows with the real numbers
+                        var windowGroups = _windows.GroupBy(x => x.ScreenId);
+                        foreach (var wg in windowGroups)
+                        {
+                            screenWindowCounts[wg.Key] = wg.Count();
+                        }
+                        // and assign this window to the screen with the fewest windows
+                        screenId = screenWindowCounts.OrderBy(kvp => kvp.Value).First().Key;
+                    }
+                    log.Info(new
+                    {
+                        Message = "Window Added",
+                        screenId,
+                        windowName,
+                        ScreenWindowCounts = JsonConvert.SerializeObject(screenWindowCounts)
+                    });
+                    
                     _windows.Add(new Window
                     {
                         Handle = w,
-                        Name = Win32.GetWindowText(w)
+                        Name = windowName,
+                        ScreenId = screenId
                     });
                 }
 
@@ -174,18 +211,36 @@ namespace NMonad
                 {
                     var removedWindow = _windows.Single(w1 => w1.Handle == w);
                     _windows.Remove(removedWindow);
+
+                    Dictionary<int, int> screenWindowCounts = new Dictionary<int, int>();
+
+                    // figure out how many windows each screen has
+                    // create entries for all screens that default to zero
+                    for (int i = 0; i < Screen.AllScreens.Length; i++)
+                    {
+                        screenWindowCounts[i] = 0;
+                    }
+                    // then update the ones that have windows with the real numbers
+                    var windowGroups = _windows.GroupBy(x => x.ScreenId);
+                    foreach (var wg in windowGroups)
+                    {
+                        screenWindowCounts[wg.Key] = wg.Count();
+                    }
+
+                    log.Info(new
+                    {
+                        Message = "Window Removed",
+                        removedWindow.ScreenId,
+                        removedWindow.Name,
+                        remainWindows = _windows.Count(w2 => w2.ScreenId == removedWindow.ScreenId),
+                        ScreenWindowCounts = JsonConvert.SerializeObject(screenWindowCounts)
+                    });
                 }  
 
-                int screenCount = Screen.AllScreens.Count();
-
-                IEnumerable<List<Window>> windowGroups = _windows.Select((x, i) => Tuple.Create(i, x))
-                                  .GroupBy(x => x.Item1 % screenCount)
-                                  .Select(x => x.Select(y => y.Item2).ToList());
-
-                int screenIndex = 0;
-                foreach (var windowGroup in windowGroups)
+                foreach (var windowGroup in _windows
+                    .GroupBy(x => x.ScreenId))
                 {
-                    layout.ReflowScreen(Screen.AllScreens[screenIndex++], windowGroup);
+                    layout.ReflowScreen(Screen.AllScreens[windowGroup.Key], windowGroup.ToList());
                 }
 
             }
