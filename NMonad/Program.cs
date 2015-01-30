@@ -27,6 +27,11 @@ namespace NMonad
 
         private static void Main(string[] args)
         {
+
+            log.Info(new
+            {
+                Message = "NMonad Started"
+            });
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             var applicationContext = new NMonadApplicationContext();
@@ -57,30 +62,56 @@ namespace NMonad
         }
         private static void dumpWindowList(object sender, EventArgs eventArgs)
         {
-            log.InfoFormat("CurrentWindows: {0}", JsonConvert.SerializeObject(_windows));
+            log.Info(new  {
+                Message = "Window List",
+                List = JsonConvert.SerializeObject(_windows)
+            });
         }
         
         private static void reverseCycleLayouts(object sender, EventArgs eventArgs)
         {
             selectedLayout += 1;
             if (selectedLayout >= _layouts.Count) selectedLayout = 0;
-            log.InfoFormat("Selected: {0}", layout.GetType().Name);
+            log.Info(new
+            {
+                Message = "Layout Changed",
+                Layout = layout.GetType().Name
+            });
         }
 
         private static void cycleLayouts(object sender, EventArgs eventArgs)
         {
             selectedLayout -= 1;
             if (selectedLayout == -1) selectedLayout = _layouts.Count - 1;
-            log.InfoFormat("Selected: {0}", layout.GetType().Name);
+            log.Info(new
+            {
+                Message = "Layout Changed",
+                Layout = layout.GetType().Name,
+                layout.MainPaneSize,
+                layout.MainPaneCount
+            });
         }
 
         private static void increaseMainPane(object sender, EventArgs eventArgs)
         {
             layout.MainPaneSize *= 1.1f;
+
+            log.Info(new
+            {
+                Message = "Main Pane Size Changed",
+                layout.MainPaneSize,
+            });
         }
+
         private static void decreaseMainPane(object sender, EventArgs eventArgs)
         {
             layout.MainPaneSize /= 1.1f;
+
+            log.Info(new
+            {
+                Message = "Main Pane Size Changed",
+                layout.MainPaneSize,
+            });
         }
 
         private static void cycleMainPane(object sender, EventArgs eventArgs)
