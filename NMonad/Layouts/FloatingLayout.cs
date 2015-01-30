@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace NMonad
+namespace NMonad.Layouts
 {
     public class FloatingLayout : Layout
     {

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 using NHotkey.WindowsForms;
+using NMonad.Layouts;
 using Timer = System.Threading.Timer;
 
 namespace NMonad

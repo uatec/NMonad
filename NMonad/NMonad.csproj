@@ -60,19 +60,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BasicLayout.cs" />
-    <Compile Include="ColumnLayout.cs" />
+    <Compile Include="Layouts\BasicLayout.cs" />
+    <Compile Include="Layouts\ColumnLayout.cs" />
     <Compile Include="FindWindows.cs" />
-    <Compile Include="FloatingLayout.cs" />
-    <Compile Include="FullscreenLayout.cs" />
-    <Compile Include="Layout.cs" />
+    <Compile Include="Layouts\FloatingLayout.cs" />
+    <Compile Include="Layouts\FullscreenLayout.cs" />
+    <Compile Include="Layouts\Layout.cs" />
     <Compile Include="NMonadApplicationContext.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RectangleBuilder.cs" />
     <Compile Include="ShowWindowCommands.cs" />
-    <Compile Include="TallLayout.cs" />
+    <Compile Include="Layouts\TallLayout.cs" />
     <Compile Include="UFlags.cs" />
+    <Compile Include="Layouts\WideLayout.cs" />
     <Compile Include="Window.cs" />
     <Compile Include="WindowPosition.cs" />
   </ItemGroup>

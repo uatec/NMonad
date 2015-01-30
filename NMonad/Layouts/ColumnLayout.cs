@@ -1,10 +1,9 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Security.Principal;
 using System.Windows.Forms;
 
-namespace NMonad
+namespace NMonad.Layouts
 {
     public class ColumnLayout : Layout
     {

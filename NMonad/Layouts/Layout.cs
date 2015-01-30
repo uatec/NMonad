@@ -1,10 +1,10 @@
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
+using Newtonsoft.Json;
 
-namespace NMonad
+namespace NMonad.Layouts
 {
     public abstract class Layout
     {
@@ -73,6 +73,13 @@ namespace NMonad
             window.Y = windowPosition.Y;
             window.Width = windowPosition.Width;
             window.Height = windowPosition.Height;
+
+            log.Info(new {
+                Message = "Window Moved",
+                Name = window.Name,
+                From = JsonConvert.SerializeObject(new Rectangle(rect.X, rect.Y, rect.Width - rect.X, rect.Height - rect.Y)),
+                To = JsonConvert.SerializeObject(windowPosition)
+            });
         }
         
     }
