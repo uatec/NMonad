@@ -18,14 +18,24 @@ namespace NMonad
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        private static List<Layout> _layouts = new List<Layout>();
-        private static int selectedLayout = 0;
 
-        private static List<Window> _windows = new List<Window>();
+        private static List<Layout> _layouts = new List<Layout>(new Layout[]
+                {
+                    //new BasicLayout(),
+                    //new ColumnLayout(),
+                    new TallLayout(),
+                    new FullscreenLayout(),
+                    new FloatingLayout(),
+                    //new WideLayout(), 
+                });
 
-        private static Layout layout
+        private static int _currentLayoutIndex = 0;
+
+        private static WindowList _windows = new WindowList();
+
+        private static Layout CurrentLayout
         {
-            get { return _layouts[selectedLayout]; }
+            get { return _layouts[_currentLayoutIndex]; }
         }
 
         private static void Main(string[] args)
@@ -39,41 +49,108 @@ namespace NMonad
             Application.SetCompatibleTextRenderingDefault(false);
             var applicationContext = new NMonadApplicationContext();
 
-            _layouts.AddRange(new Layout[]
+            var superkey = Keys.Control | Keys.Alt;
+
+            HotkeyManager.Current.AddOrReplace("CycleLayouts", superkey | Keys.Space, cycleLayouts);
+            HotkeyManager.Current.AddOrReplace("ReverseCycleLayouts", superkey | Keys.Shift | Keys.Space, reverseCycleLayouts);
+            
+            HotkeyManager.Current.AddOrReplace("CycleMainWindow", superkey | Keys.Up, cycleMainPane);
+            HotkeyManager.Current.AddOrReplace("ReverseCycleMainWindow", superkey | Keys.Down, reverseCycleMainPane);
+
+            HotkeyManager.Current.AddOrReplace("IncreaseMainPane", superkey | Keys.H, increaseMainPane);
+            HotkeyManager.Current.AddOrReplace("DecreaseMainPane", superkey | Keys.Shift | Keys.H, decreaseMainPane);
+            
+            HotkeyManager.Current.AddOrReplace("CycleAssignedScreen", superkey | Keys.Right, cycleAssignedScreen);
+            HotkeyManager.Current.AddOrReplace("ReverseCycleAssignedScreen", superkey | Keys.Left, reverseCycleAssignedScreen);
+
+            HotkeyManager.Current.AddOrReplace("DumpWindowList", superkey | Keys.K, dumpWindowList);
+            
+            HotkeyManager.Current.AddOrReplace("Exit", superkey | Keys.Q, (s, e) => applicationContext.ExitThread());
+
+            object syncRoot = new object();
+
+            using (new Timer(state =>
                 {
-                    //new BasicLayout(),
-                    //new ColumnLayout(),
-                    //new FloatingLayout(),
-                    new TallLayout(),
-                    new FullscreenLayout()
-                });
-            
-            HotkeyManager.Current.AddOrReplace("CycleLayouts", Keys.Control | Keys.Alt | Keys.Space, cycleLayouts);
-            HotkeyManager.Current.AddOrReplace("ReverseCycleLayouts", Keys.Control | Keys.Alt | Keys.Shift | Keys.Space, reverseCycleLayouts);
-            
-            HotkeyManager.Current.AddOrReplace("CycleMainWindow", Keys.Control | Keys.Alt | Keys.J, cycleMainPane);
-            HotkeyManager.Current.AddOrReplace("ReverseCycleMainWindow", Keys.Control | Keys.Alt | Keys.Shift | Keys.J, reverseCycleMainPane);
-
-            HotkeyManager.Current.AddOrReplace("IncreaseMainPane", Keys.Control | Keys.Alt | Keys.H, increaseMainPane);
-            HotkeyManager.Current.AddOrReplace("DecreaseMainPane", Keys.Control | Keys.Alt | Keys.Shift | Keys.H, decreaseMainPane);
-
-            HotkeyManager.Current.AddOrReplace("DumpWindowList", Keys.Control | Keys.Alt | Keys.K, dumpWindowList);
-            
-            HotkeyManager.Current.AddOrReplace("DumpWindowList", Keys.Control | Keys.Alt | Keys.Q, (s, e) => applicationContext.ExitThread());
-
-            object o = new object();
-
-            Timer t = new Timer(state =>
+                    if (Monitor.TryEnter(syncRoot, 100))
+                    {
+                        Run();
+                        Monitor.Exit(syncRoot);
+                    }
+                }, null, 0, 100))
             {
-                if (Monitor.TryEnter(o, 100))
-                {
-                    Run();
-                    Monitor.Exit(o);
-                }
-            }, null, 0, 100);
-            Application.Run(applicationContext);
-            t.Dispose();
+                Application.Run(applicationContext);
+            }
         }
+
+
+        private static void cycleAssignedScreen(object sender, EventArgs eventArgs)
+        {
+            int screenCount = Screen.AllScreens.Count();
+            IntPtr activeWindowHandle = Win32.GetForegroundWindow();
+
+            Window activeWindow = _windows.SingleOrDefault(w => w.Handle == activeWindowHandle);
+
+            if (activeWindow == null)
+            {
+                log.Error(new
+                {
+                    Message = "Tried to cycle window between screens but could not identify the current window.",
+                    WindowName = Win32.GetWindowText(activeWindowHandle),
+                    WindowHandle = activeWindowHandle
+                });
+                return;
+            }
+
+            int oldScreenId = activeWindow.ScreenId;
+            activeWindow.ScreenId++;
+            if (activeWindow.ScreenId >= screenCount)
+            {
+                activeWindow.ScreenId = 0;
+            }
+            
+            log.Info(new
+            {
+                Message = "Window Moved Screen",
+                WindowName = activeWindow.Name,
+                NewScreenId = activeWindow.ScreenId,
+                OldScreenId = oldScreenId 
+            });
+        }
+
+        private static void reverseCycleAssignedScreen(object sender, EventArgs eventArgs)
+        {
+            int screenCount = Screen.AllScreens.Count();
+            IntPtr activeWindowHandle = Win32.GetForegroundWindow();
+
+            Window activeWindow = _windows.SingleOrDefault(w => w.Handle == activeWindowHandle);
+
+            if (activeWindow == null)
+            {
+                log.Error(new
+                {
+                    Message = "Tried to cycle window between screens but could not identify the current window.",
+                    WindowName = Win32.GetWindowText(activeWindowHandle),
+                    WindowHandle = activeWindowHandle
+                });
+                return;
+            }
+
+            int oldScreenId = activeWindow.ScreenId;
+            activeWindow.ScreenId--;
+            if (activeWindow.ScreenId < 0)
+            {
+                activeWindow.ScreenId = screenCount - 1;
+            }
+            
+            log.Info(new
+            {
+                Message = "Window Moved Screen",
+                WindowName = activeWindow.Name,
+                NewScreenId = activeWindow.ScreenId,
+                OldScreenId = oldScreenId
+            });
+        }
+
         private static void dumpWindowList(object sender, EventArgs eventArgs)
         {
             log.Info(new  {
@@ -84,47 +161,51 @@ namespace NMonad
         
         private static void reverseCycleLayouts(object sender, EventArgs eventArgs)
         {
-            selectedLayout += 1;
-            if (selectedLayout >= _layouts.Count) selectedLayout = 0;
+            _currentLayoutIndex += 1;
+            if (_currentLayoutIndex >= _layouts.Count) _currentLayoutIndex = 0;
             log.Info(new
             {
                 Message = "Layout Changed",
-                Layout = layout.GetType().Name
+                Layout = CurrentLayout.GetType().Name,
+                CurrentLayout.MainPaneSize,
+                CurrentLayout.MainPaneCount
             });
+            MessageForm.ShowMessage(CurrentLayout.GetType().Name.Replace("Layout", " Layout"), 1000);
         }
 
         private static void cycleLayouts(object sender, EventArgs eventArgs)
         {
-            selectedLayout -= 1;
-            if (selectedLayout == -1) selectedLayout = _layouts.Count - 1;
+            _currentLayoutIndex -= 1;
+            if (_currentLayoutIndex == -1) _currentLayoutIndex = _layouts.Count - 1;
             log.Info(new
             {
                 Message = "Layout Changed",
-                Layout = layout.GetType().Name,
-                layout.MainPaneSize,
-                layout.MainPaneCount
+                Layout = CurrentLayout.GetType().Name,
+                CurrentLayout.MainPaneSize,
+                CurrentLayout.MainPaneCount
             });
+            MessageForm.ShowMessage(CurrentLayout.GetType().Name.Replace("Layout", " Layout"), 1000);
         }
 
         private static void increaseMainPane(object sender, EventArgs eventArgs)
         {
-            layout.MainPaneSize *= 1.1f;
+            CurrentLayout.MainPaneSize *= 1.1f;
 
             log.Info(new
             {
                 Message = "Main Pane Size Changed",
-                layout.MainPaneSize,
+                CurrentLayout.MainPaneSize,
             });
         }
 
         private static void decreaseMainPane(object sender, EventArgs eventArgs)
         {
-            layout.MainPaneSize /= 1.1f;
+            CurrentLayout.MainPaneSize /= 1.1f;
 
             log.Info(new
             {
                 Message = "Main Pane Size Changed",
-                layout.MainPaneSize,
+                CurrentLayout.MainPaneSize,
             });
         }
 
@@ -159,7 +240,7 @@ namespace NMonad
                 };
 
                 List<IntPtr> extantWindowHandles = new List<IntPtr>();
-                foreach (IntPtr ptr in Win32.FindWindowsWithText(""))
+                foreach (IntPtr ptr in Win32.GetAllWindows())
                 {
                     string windowName = Win32.GetWindowText(ptr);
                     if (string.IsNullOrEmpty(windowName)) continue;
@@ -167,8 +248,7 @@ namespace NMonad
                     if (ignoredWindows.Contains(windowName)) continue;
                     if (!Win32.IsWindowVisible(ptr)) continue;
                     if (Win32.IsIconic(ptr)) continue;
-                    if (WindowsIsSmall(ptr)) continue;
-
+                    
                     extantWindowHandles.Add(ptr);
                 }
 
@@ -178,6 +258,9 @@ namespace NMonad
 
                 foreach (var w in newWindows)
                 {
+                    // Only ignore small windows if they're added. If an existing window becomes small we still want to control it... i suspect
+                    if (WindowsIsSmall(w)) continue;
+
                     string windowName = Win32.GetWindowText(w);
                     // Assign this window to screen 0, or the next screen that doesn't have anything assigned
                     int screenId = _windows.Any() ? _windows.Max(x => x.ScreenId) + 1 : 0;
@@ -246,12 +329,24 @@ namespace NMonad
                         remainWindows = _windows.Count(w2 => w2.ScreenId == removedWindow.ScreenId),
                         ScreenWindowCounts = JsonConvert.SerializeObject(screenWindowCounts)
                     });
-                }  
+                }
 
                 foreach (var windowGroup in _windows
                     .GroupBy(x => x.ScreenId))
                 {
-                    layout.ReflowScreen(Screen.AllScreens[windowGroup.Key], windowGroup.ToList());
+                    if (windowGroup.Key >= Screen.AllScreens.Count())
+                    {
+                        log.Warn(new
+                        {
+                            Message = "Invalid screen Id - Suspected screen count change, reassigning windows to screens and reflowing.",
+                            AttemptedScreenId = windowGroup.Key,
+                            NumberOfScreens = Screen.AllScreens.Count()
+                        });
+                        _windows.ForEach(w => w.ScreenId = -1);
+                        return;
+                    }
+
+                    CurrentLayout.ReflowScreen(Screen.AllScreens[windowGroup.Key], windowGroup.ToList());
                 }
 
             }
@@ -276,5 +371,6 @@ namespace NMonad
             // same for Y axis
             return rect.Width - rect.X < threshold.Width && rect.Height - rect.Y < threshold.Height;
         }
+
     }
 }

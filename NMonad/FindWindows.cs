@@ -8,7 +8,6 @@ namespace NMonad
 {
     public class Win32
     {
-
         // The GetWindowRect function takes a handle to the window as the first parameter. The second parameter
         // must include a reference to a Rectangle object. This Rectangle object will then have it's values set
         // to the window rectangle properties.
@@ -57,9 +56,21 @@ namespace NMonad
             return String.Empty;
         }
 
+        public static IEnumerable<IntPtr> GetAllWindows()
+        {
+            List<IntPtr> windows = new List<IntPtr>();
+
+            EnumWindows((wnd, param) =>
+            {
+                windows.Add(wnd);
+                return true;
+            }, IntPtr.Zero);
+
+            return windows;
+        }
+
         public static IEnumerable<IntPtr> FindWindowsWithText(string titleText)
         {
-            IntPtr found = IntPtr.Zero;
             List<IntPtr> windows = new List<IntPtr>();
 
             EnumWindows(delegate(IntPtr wnd, IntPtr param)
@@ -85,7 +96,9 @@ namespace NMonad
         [DllImport("user32.dll")]
         public static extern bool ShowWindowAsync(IntPtr hWnd, ShowWindowCommands cmdShow);
 
-  
 
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetForegroundWindow();
     }
 }
