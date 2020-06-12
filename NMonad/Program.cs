@@ -16,7 +16,7 @@ namespace NMonad
 {
     class Program
     {
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        // private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType).;
 
 
         private static List<Layout> _layouts = new List<Layout>(new Layout[]
@@ -38,6 +38,29 @@ namespace NMonad
             get { return _layouts[_currentLayoutIndex]; }
         }
 
+        static Log log = new Log();
+        public class Log
+        {
+            internal void Info(object p)
+            {
+                Console.WriteLine(JsonConvert.SerializeObject(p, Formatting.Indented));
+            }
+
+            internal void Error(object p)
+            {
+                Console.WriteLine(JsonConvert.SerializeObject(p,Formatting.Indented));
+            }
+
+            internal void Warn(object p)
+            {
+                Console.WriteLine(JsonConvert.SerializeObject(p,Formatting.Indented));
+            }
+
+            internal void Fatal(string v, Exception ex)
+            {
+                Console.WriteLine(JsonConvert.SerializeObject(v,Formatting.Indented));
+            }
+        }
         private static void Main(string[] args)
         {
 
@@ -155,7 +178,7 @@ namespace NMonad
         {
             log.Info(new  {
                 Message = "Window List",
-                List = JsonConvert.SerializeObject(_windows)
+                List = _windows
             });
         }
         
