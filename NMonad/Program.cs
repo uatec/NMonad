@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using NHotkey.WindowsForms;
 using NMonad.Layouts;
@@ -14,6 +15,12 @@ using Timer = System.Threading.Timer;
 
 namespace NMonad
 {
+    public class RootConfig
+    {
+        public string[] Layouts { get; set; } = new string[] {};
+        public string[] ExcludedWindows { get; set; } = new string[] {};
+    }
+
     class Program
     {
         // private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType).;
@@ -63,7 +70,12 @@ namespace NMonad
         }
         private static void Main(string[] args)
         {
-
+            IConfiguration Configuration = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddEnvironmentVariables()
+                .AddCommandLine(args)
+                .Build();
+                
             log.Info(new
             {
                 Message = "NMonad Started"
@@ -96,7 +108,8 @@ namespace NMonad
                 {
                     if (Monitor.TryEnter(syncRoot, 100))
                     {
-                        Run();
+                        var config = Configuration.Get<RootConfig>();
+                        Run(config);
                         Monitor.Exit(syncRoot);
                     }
                 }, null, 0, 100))
@@ -246,33 +259,17 @@ namespace NMonad
             _windows.Add(firstWindow);
         }
 
-        private static void Run()
+        private static void Run(RootConfig config)
         {
             try
             {
-                string[] ignoredWindows = new[]
-                {
-                    "Program Manager",
-                    "Start", 
-                    "Start menu",
-                    "Task Switching",
-                    "LockHunter",
-                    "Razer Configurator",
-                    "Microsoft OneNote 2013 - Windows taskbar",
-                    "Open",
-                    "Settings",
-                    "Microsoft Store",
-                    "NVIDIA GeForce Overlay",
-                    "Origin"
-                };
-
                 List<IntPtr> extantWindowHandles = new List<IntPtr>();
                 foreach (IntPtr ptr in Win32.GetAllWindows())
                 {
                     string windowName = Win32.GetWindowText(ptr);
                     if (string.IsNullOrEmpty(windowName)) continue;
                     //if (ignoredWindows.Any(w => -1 < windowName.IndexOf(w, StringComparison.CurrentCultureIgnoreCase))) continue;
-                    if (ignoredWindows.Contains(windowName)) continue;
+                    if (config.ExcludedWindows.Contains(windowName)) continue;
                     if (!Win32.IsWindowVisible(ptr)) continue;
                     if (Win32.IsIconic(ptr)) continue;
                     
