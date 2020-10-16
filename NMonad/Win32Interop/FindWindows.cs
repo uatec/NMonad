@@ -66,6 +66,9 @@ namespace NMonad.Win32Interop
         [DllImport("user32.dll")]
         public static extern bool IsWindowVisible(IntPtr hWnd);
 
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetActiveWindow();
+
         public static string GetWindowText(IntPtr hWnd)
         {
             int size = GetWindowTextLength(hWnd);

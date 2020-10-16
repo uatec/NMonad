@@ -8,7 +8,7 @@ namespace NMonad.Layouts
 {
     public class ColumnLayout : Layout
     {
-        public override void ReflowScreen(Screen screen, List<Window> windows)
+        public override void ReflowScreen(Screen screen, List<Window> windows, Window activeWindow)
         {
             if (windows.Count == 0) return;
             

@@ -11,7 +11,7 @@ namespace NMonad.Layouts
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public abstract void ReflowScreen(Screen screen, List<Window> windows);
+        public abstract void ReflowScreen(Screen screen, List<Window> windows, Window activeWindow);
         /// <summary>
         /// The number of Panes which will be considered primary and be reserved for the top N windows.
         /// </summary>

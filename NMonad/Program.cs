@@ -230,6 +230,8 @@ namespace NMonad
             // try
             {
                 List<IntPtr> extantWindowHandles = new List<IntPtr>();
+                IntPtr activeWindow = Win32.GetActiveWindow();
+
                 foreach (IntPtr ptr in Win32.GetAllWindows())
                 {
                     string windowName = Win32.GetWindowText(ptr);
@@ -336,7 +338,7 @@ namespace NMonad
                         return;
                     }
 
-                    Model.CurrentLayout.ReflowScreen(Screen.AllScreens[windowGroup.Key], windowGroup.ToList());
+                    Model.CurrentLayout.ReflowScreen(Screen.AllScreens[windowGroup.Key], windowGroup.ToList(), windowGroup.ToList().SingleOrDefault(w => w.Handle == activeWindow));
                 }
 
             }

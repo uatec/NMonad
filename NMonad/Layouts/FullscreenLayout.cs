@@ -8,7 +8,7 @@ namespace NMonad.Layouts
     public class FullscreenLayout : Layout
     {
 
-        public override void ReflowScreen(Screen screen, List<Window> windows)
+        public override void ReflowScreen(Screen screen, List<Window> windows, Window activeWindow)
         {
             Rectangle frame = new Rectangle
             {

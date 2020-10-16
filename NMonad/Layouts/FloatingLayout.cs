@@ -7,7 +7,7 @@ namespace NMonad.Layouts
     public class FloatingLayout : Layout
     {
 
-        public override void ReflowScreen(Screen screen, List<Window> windows)
+        public override void ReflowScreen(Screen screen, List<Window> windows, Window activeWindow)
         {
             // noop
         }

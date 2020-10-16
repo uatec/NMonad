@@ -14,7 +14,7 @@ namespace NMonad.Layouts
             base.MainPaneSize = 0.5f;
         }
 
-        public override void ReflowScreen(Screen screen, List<Window> windows)
+        public override void ReflowScreen(Screen screen, List<Window> windows, Window activeWindow)
         {
             if (windows.Count == 0) return;
 

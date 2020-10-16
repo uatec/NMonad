@@ -9,7 +9,7 @@ namespace NMonad.Layouts
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public override void ReflowScreen(Screen screen, List<Window> windows)
+        public override void ReflowScreen(Screen screen, List<Window> windows, Window activeWindow)
         {
             if (windows.Count == 0) return;
 
