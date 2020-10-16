@@ -31,7 +31,7 @@ namespace NMonad
 
             //The icon is added to the project resources.
             //Here I assume that the name of the file is 'TrayIcon.ico'
-            //TrayIcon.Icon = Properties.Resources.TrayIcon;
+            TrayIcon.Icon = new Icon("NMonad.ico");
 
             //Optional - handle doubleclicks on the icon:
             TrayIcon.DoubleClick += TrayIcon_DoubleClick;

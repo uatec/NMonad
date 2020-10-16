@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <Content Include="appsettings.json" CopyToOutputDirectory="Always" />
+    <Content Include="NMonad.ico" CopyToOutputDirectory="Always" />
   </ItemGroup>
 
 </Project>
