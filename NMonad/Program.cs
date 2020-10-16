@@ -259,7 +259,11 @@ namespace NMonad
                     "LockHunter",
                     "Razer Configurator",
                     "Microsoft OneNote 2013 - Windows taskbar",
-                    "Open"
+                    "Open",
+                    "Settings",
+                    "Microsoft Store",
+                    "NVIDIA GeForce Overlay",
+                    "Origin"
                 };
 
                 List<IntPtr> extantWindowHandles = new List<IntPtr>();
