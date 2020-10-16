@@ -12,16 +12,9 @@ using Timer = System.Threading.Timer;
 
 namespace NMonad
 {
-    public class RootConfig
-    {
-        public string[] Layouts { get; set; } = new string[] {};
-        public string[] ExcludedWindows { get; set; } = new string[] {};
-    }
-
     class Program
     {
         // private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType).;
-
 
         private static List<Layout> _layouts = new List<Layout>(new Layout[]
                 {
