@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Text;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using Microsoft.Extensions.Configuration;
@@ -75,7 +72,7 @@ namespace NMonad
                 .AddEnvironmentVariables()
                 .AddCommandLine(args)
                 .Build();
-                
+
             log.Info(new
             {
                 Message = "NMonad Started"
