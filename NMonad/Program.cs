@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using NHotkey.WindowsForms;
 using NMonad.Layouts;
+using NMonad.Win32Interop;
 using Timer = System.Threading.Timer;
 
 namespace NMonad

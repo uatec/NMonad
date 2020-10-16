@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using Newtonsoft.Json;
+using NMonad.Win32Interop;
 
 namespace NMonad.Layouts
 {

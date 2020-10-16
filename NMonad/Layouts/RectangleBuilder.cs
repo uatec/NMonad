@@ -1,6 +1,6 @@
 using System.Drawing;
 
-namespace NMonad
+namespace NMonad.Layouts
 {
     public class RectangleBuilder
     {

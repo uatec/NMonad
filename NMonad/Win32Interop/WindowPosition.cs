@@ -1,4 +1,4 @@
-﻿namespace NMonad
+﻿namespace NMonad.Win32Interop
 {
     public enum WindowPosition
     {

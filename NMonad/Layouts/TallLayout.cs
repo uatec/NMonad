@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using NMonad.Win32Interop;
 
 namespace NMonad.Layouts
 {

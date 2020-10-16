@@ -1,6 +1,6 @@
 using System;
 
-namespace NMonad
+namespace NMonad.Win32Interop
 {
     public class Window
     {

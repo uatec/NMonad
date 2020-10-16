@@ -4,10 +4,33 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace NMonad
+namespace NMonad.Win32Interop
 {
-    public class Win32
+    public static class Win32
     {
+        public enum LWA
+        {
+            ColorKey = 0x1,
+            Alpha = 0x2
+        }
+
+        public enum GWL
+        {
+            ExStyle = -20
+        }
+
+        public enum WS_EX
+        {
+            Transparent = 0x20,
+            Layered = 0x80000
+        }
+
+        [DllImport("user32.dll")]
+        public static extern int SetWindowLong(IntPtr hWnd, GWL nIndex, WS_EX dsNewLong);
+
+        [DllImport("user32.dll")]
+        public static extern bool SetLayeredWindowAttributes(IntPtr hWnd, int crKey, byte alpha, LWA dwFlags);
+    
         // The GetWindowRect function takes a handle to the window as the first parameter. The second parameter
         // must include a reference to a Rectangle object. This Rectangle object will then have it's values set
         // to the window rectangle properties.

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
+using NMonad.Win32Interop;
 
 namespace NMonad
 {
