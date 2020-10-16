@@ -16,48 +16,19 @@ namespace NMonad
     {
         // private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType).;
 
-        private static List<Layout> _layouts = new List<Layout>(new Layout[]
-                {
-                    //new BasicLayout(),
-                    //new ColumnLayout(),
-                    new TallLayout(),
-                    new FullscreenLayout(),
-                    new FloatingLayout(),
-                    //new WideLayout(), 
-                });
-
-        private static int _currentLayoutIndex = 0;
-
-        private static WindowList _windows = new WindowList();
-
-        private static Layout CurrentLayout
-        {
-            get { return _layouts[_currentLayoutIndex]; }
-        }
+        private static Dictionary<string, Layout> registeredLayout = new Dictionary<string, Layout> {
+            { "basic", new BasicLayout() },
+            { "column", new ColumnLayout() },
+            { "tall", new TallLayout() },
+            { "fullscreen", new FullscreenLayout() },
+            { "floating", new FloatingLayout() },
+            { "wide", new WideLayout() }
+        };
+        
+        private static RuntimeModel Model = new RuntimeModel();
 
         static Log log = new Log();
-        public class Log
-        {
-            internal void Info(object p)
-            {
-                Console.WriteLine(JsonConvert.SerializeObject(p, Formatting.Indented));
-            }
-
-            internal void Error(object p)
-            {
-                Console.WriteLine(JsonConvert.SerializeObject(p,Formatting.Indented));
-            }
-
-            internal void Warn(object p)
-            {
-                Console.WriteLine(JsonConvert.SerializeObject(p,Formatting.Indented));
-            }
-
-            internal void Fatal(string v, Exception ex)
-            {
-                Console.WriteLine(JsonConvert.SerializeObject(v,Formatting.Indented));
-            }
-        }
+        
         private static void Main(string[] args)
         {
             IConfiguration Configuration = new ConfigurationBuilder()
@@ -94,11 +65,15 @@ namespace NMonad
 
             object syncRoot = new object();
 
+            var config = Configuration.Get<RootConfig>();
+
+            Model.ActiveLayouts = registeredLayout.Where(kvp => config.Layouts.Contains(kvp.Key)).Select(kvp => kvp.Value).ToList();
+
+
             using (new Timer(state =>
                 {
                     if (Monitor.TryEnter(syncRoot, 100))
                     {
-                        var config = Configuration.Get<RootConfig>();
                         Run(config);
                         Monitor.Exit(syncRoot);
                     }
@@ -114,7 +89,7 @@ namespace NMonad
             int screenCount = Screen.AllScreens.Count();
             IntPtr activeWindowHandle = Win32.GetForegroundWindow();
 
-            Window activeWindow = _windows.SingleOrDefault(w => w.Handle == activeWindowHandle);
+            Window activeWindow = Model.Windows.SingleOrDefault(w => w.Handle == activeWindowHandle);
 
             if (activeWindow == null)
             {
@@ -148,7 +123,7 @@ namespace NMonad
             int screenCount = Screen.AllScreens.Count();
             IntPtr activeWindowHandle = Win32.GetForegroundWindow();
 
-            Window activeWindow = _windows.SingleOrDefault(w => w.Handle == activeWindowHandle);
+            Window activeWindow = Model.Windows.SingleOrDefault(w => w.Handle == activeWindowHandle);
 
             if (activeWindow == null)
             {
@@ -181,77 +156,77 @@ namespace NMonad
         {
             log.Info(new  {
                 Message = "Window List",
-                List = _windows
+                List = Model.Windows
             });
         }
         
         private static void reverseCycleLayouts(object sender, EventArgs eventArgs)
         {
-            _currentLayoutIndex += 1;
-            if (_currentLayoutIndex >= _layouts.Count) _currentLayoutIndex = 0;
+            Model.CurrentLayoutIndex += 1;
+            if (Model.CurrentLayoutIndex >= Model.ActiveLayouts.Count) Model.CurrentLayoutIndex = 0;
             log.Info(new
             {
                 Message = "Layout Changed",
-                Layout = CurrentLayout.GetType().Name,
-                CurrentLayout.MainPaneSize,
-                CurrentLayout.MainPaneCount
+                Layout = Model.CurrentLayout.GetType().Name,
+                Model.CurrentLayout.MainPaneSize,
+                Model.CurrentLayout.MainPaneCount
             });
-            MessageForm.ShowMessage(CurrentLayout.GetType().Name.Replace("Layout", " Layout"), 1000);
+            MessageForm.ShowMessage(Model.CurrentLayout.GetType().Name.Replace("Layout", " Layout"), 1000);
         }
 
         private static void cycleLayouts(object sender, EventArgs eventArgs)
         {
-            _currentLayoutIndex -= 1;
-            if (_currentLayoutIndex == -1) _currentLayoutIndex = _layouts.Count - 1;
+            Model.CurrentLayoutIndex -= 1;
+            if (Model.CurrentLayoutIndex == -1) Model.CurrentLayoutIndex = Model.ActiveLayouts.Count - 1;
             log.Info(new
             {
                 Message = "Layout Changed",
-                Layout = CurrentLayout.GetType().Name,
-                CurrentLayout.MainPaneSize,
-                CurrentLayout.MainPaneCount
+                Layout = Model.CurrentLayout.GetType().Name,
+                Model.CurrentLayout.MainPaneSize,
+                Model.CurrentLayout.MainPaneCount
             });
-            MessageForm.ShowMessage(CurrentLayout.GetType().Name.Replace("Layout", " Layout"), 1000);
+            MessageForm.ShowMessage(Model.CurrentLayout.GetType().Name.Replace("Layout", " Layout"), 1000);
         }
 
         private static void increaseMainPane(object sender, EventArgs eventArgs)
         {
-            CurrentLayout.MainPaneSize *= 1.1f;
+            Model.CurrentLayout.MainPaneSize *= 1.1f;
 
             log.Info(new
             {
                 Message = "Main Pane Size Changed",
-                CurrentLayout.MainPaneSize,
+                Model.CurrentLayout.MainPaneSize,
             });
         }
 
         private static void decreaseMainPane(object sender, EventArgs eventArgs)
         {
-            CurrentLayout.MainPaneSize /= 1.1f;
+            Model.CurrentLayout.MainPaneSize /= 1.1f;
 
             log.Info(new
             {
                 Message = "Main Pane Size Changed",
-                CurrentLayout.MainPaneSize,
+                Model.CurrentLayout.MainPaneSize,
             });
         }
 
         private static void cycleMainPane(object sender, EventArgs eventArgs)
         {
-            var lastWindow = _windows.Last();
-            _windows.Remove(lastWindow);
-            _windows.Insert(0, lastWindow);
+            var lastWindow = Model.Windows.Last();
+            Model.Windows.Remove(lastWindow);
+            Model.Windows.Insert(0, lastWindow);
         }
 
         private static void reverseCycleMainPane(object sender, EventArgs eventArgs)
         {
-            var firstWindow = _windows.First();
-            _windows.RemoveAt(0);
-            _windows.Add(firstWindow);
+            var firstWindow = Model.Windows.First();
+            Model.Windows.RemoveAt(0);
+            Model.Windows.Add(firstWindow);
         }
 
         private static void Run(RootConfig config)
         {
-            try
+            // try
             {
                 List<IntPtr> extantWindowHandles = new List<IntPtr>();
                 foreach (IntPtr ptr in Win32.GetAllWindows())
@@ -266,7 +241,7 @@ namespace NMonad
                     extantWindowHandles.Add(ptr);
                 }
 
-                var knownHandles = _windows.Select(w => w.Handle).ToList();
+                var knownHandles = Model.Windows.Select(w => w.Handle).ToList();
                 var oldWindows = knownHandles.Except(extantWindowHandles).ToList();
                 var newWindows = extantWindowHandles.Except(knownHandles).ToList();
 
@@ -277,7 +252,7 @@ namespace NMonad
 
                     string windowName = Win32.GetWindowText(w);
                     // Assign this window to screen 0, or the next screen that doesn't have anything assigned
-                    int screenId = _windows.Any() ? _windows.Max(x => x.ScreenId) + 1 : 0;
+                    int screenId = Model.Windows.Any() ? Model.Windows.Max(x => x.ScreenId) + 1 : 0;
 
                     // if we have tried to assign it to a screen that doesn't exist
                     Dictionary<int, int> screenWindowCounts = new Dictionary<int, int>();
@@ -291,7 +266,7 @@ namespace NMonad
                             screenWindowCounts[i] = 0;
                         }
                         // then update the ones that have windows with the real numbers
-                        var windowGroups = _windows.GroupBy(x => x.ScreenId);
+                        var windowGroups = Model.Windows.GroupBy(x => x.ScreenId);
                         foreach (var wg in windowGroups)
                         {
                             screenWindowCounts[wg.Key] = wg.Count();
@@ -307,7 +282,7 @@ namespace NMonad
                         ScreenWindowCounts = JsonConvert.SerializeObject(screenWindowCounts)
                     });
                     
-                    _windows.Add(new Window
+                    Model.Windows.Add(new Window
                     {
                         Handle = w,
                         Name = windowName,
@@ -317,8 +292,8 @@ namespace NMonad
 
                 foreach (var w in oldWindows)
                 {
-                    var removedWindow = _windows.Single(w1 => w1.Handle == w);
-                    _windows.Remove(removedWindow);
+                    var removedWindow = Model.Windows.Single(w1 => w1.Handle == w);
+                    Model.Windows.Remove(removedWindow);
 
                     Dictionary<int, int> screenWindowCounts = new Dictionary<int, int>();
 
@@ -329,7 +304,7 @@ namespace NMonad
                         screenWindowCounts[i] = 0;
                     }
                     // then update the ones that have windows with the real numbers
-                    var windowGroups = _windows.GroupBy(x => x.ScreenId);
+                    var windowGroups = Model.Windows.GroupBy(x => x.ScreenId);
                     foreach (var wg in windowGroups)
                     {
                         screenWindowCounts[wg.Key] = wg.Count();
@@ -340,12 +315,12 @@ namespace NMonad
                         Message = "Window Removed",
                         removedWindow.ScreenId,
                         removedWindow.Name,
-                        remainWindows = _windows.Count(w2 => w2.ScreenId == removedWindow.ScreenId),
+                        remainWindows = Model.Windows.Count(w2 => w2.ScreenId == removedWindow.ScreenId),
                         ScreenWindowCounts = JsonConvert.SerializeObject(screenWindowCounts)
                     });
                 }
 
-                foreach (var windowGroup in _windows
+                foreach (var windowGroup in Model.Windows
                     .GroupBy(x => x.ScreenId))
                 {
                     if (windowGroup.Key >= Screen.AllScreens.Count())
@@ -356,18 +331,19 @@ namespace NMonad
                             AttemptedScreenId = windowGroup.Key,
                             NumberOfScreens = Screen.AllScreens.Count()
                         });
-                        _windows.ForEach(w => w.ScreenId = -1);
+                        Model.Windows.ForEach(w => w.ScreenId = -1);
                         return;
                     }
 
-                    CurrentLayout.ReflowScreen(Screen.AllScreens[windowGroup.Key], windowGroup.ToList());
+                    Model.CurrentLayout.ReflowScreen(Screen.AllScreens[windowGroup.Key], windowGroup.ToList());
                 }
 
             }
-            catch (Exception ex)
-            {
-                log.Fatal("unhandled fatal exception", ex);
-            }
+            // catch (Exception ex)
+            // {
+            //     log.Fatal("unhandled fatal exception", ex);
+            //     throw;
+            // }
         }
 
 
