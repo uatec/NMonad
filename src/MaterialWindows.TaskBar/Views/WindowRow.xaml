@@ -4,11 +4,14 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="MaterialWindows.TaskBar.Views.WindowRow">
-  <ItemsControl Items="{Binding Windows}">
-      <ItemsControl.ItemTemplate>
-          <DataTemplate>
-              <TextBlock Text="{Binding Name}" />
-          </DataTemplate>
-      </ItemsControl.ItemTemplate>
-  </ItemsControl>
+  <StackPanel>
+    <ItemsControl Items="{Binding Windows}">
+        <ItemsControl.ItemTemplate>
+            <DataTemplate>
+                <Button Content="{Binding Name}" />
+            </DataTemplate>
+        </ItemsControl.ItemTemplate>
+    </ItemsControl>
+    <Button Content="+" />
+  </StackPanel>
 </UserControl>

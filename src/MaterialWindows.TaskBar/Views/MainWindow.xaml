@@ -16,10 +16,11 @@
         <ItemsControl Items="{Binding WindowRows}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding Name}"/>
+                    <Button Content="{Binding Name}" />
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
+        <Button Content="+" />
         <TextBlock Text="---Active Window--" />
         <TextBlock Text="{Binding ActiveRow.ActiveWindow.Name}" />
     </StackPanel>
