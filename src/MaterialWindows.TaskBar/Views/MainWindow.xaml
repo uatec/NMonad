@@ -17,7 +17,6 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding Name}"/>
-
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
