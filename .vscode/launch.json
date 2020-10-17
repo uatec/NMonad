@@ -9,9 +9,9 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/NMonad/bin/Debug/netcoreapp3.1/NMonad.dll",
+            "program": "${workspaceFolder}/src/NMonad/bin/Debug/netcoreapp3.1/NMonad.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/NMonad",
+            "cwd": "${workspaceFolder}/src/NMonad",
             "console": "internalConsole",
             "stopAtEntry": false
         },
