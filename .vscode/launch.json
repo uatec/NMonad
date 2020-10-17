@@ -5,13 +5,24 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": ".NET Core Launch (console)",
+            "name": "Launch NMonad",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/src/NMonad/bin/Debug/netcoreapp3.1/NMonad.dll",
             "args": [],
             "cwd": "${workspaceFolder}/src/NMonad",
+            "console": "internalConsole",
+            "stopAtEntry": false
+        },
+        {
+            "name": "Launch TaskBar",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/MaterialWindows.TaskBar/bin/Debug/netcoreapp3.0/MaterialWindows.TaskBar.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/MaterialWindows.TaskBar",
             "console": "internalConsole",
             "stopAtEntry": false
         },
