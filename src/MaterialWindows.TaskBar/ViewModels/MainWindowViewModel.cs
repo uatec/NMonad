@@ -8,6 +8,8 @@ namespace MaterialWindows.TaskBar.ViewModels
     {
         public string Greeting => "Hello World!";
 
+        public int ActiveRowIndex { get; set; }
+        public WindowRow ActiveRow => WindowRows[ActiveRowIndex];
         public List<WindowRow> WindowRows { get; set; } = new List<WindowRow>
         {
             new WindowRow

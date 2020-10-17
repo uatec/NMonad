@@ -1,33 +1,29 @@
 <Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="clr-namespace:MaterialWindows.TaskBar.ViewModels;assembly=MaterialWindows.TaskBar"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="MaterialWindows.TaskBar.Views.MainWindow"
-        Icon="/Assets/avalonia-logo.ico"
-        Title="MaterialWindows.TaskBar">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:vm="clr-namespace:MaterialWindows.TaskBar.ViewModels;assembly=MaterialWindows.TaskBar"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="MaterialWindows.TaskBar.Views.MainWindow" Icon="/Assets/avalonia-logo.ico" Title="MaterialWindows.TaskBar">
 
     <Design.DataContext>
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
-    
-    <ItemsControl Items="{Binding WindowRows}">
-      <ItemsControl.ItemTemplate>
-        <DataTemplate>
-            <StackPanel>
-                <TextBlock Text="{Binding Name}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                <ItemsControl Items="{Binding Windows}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Name}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </StackPanel>
+    <StackPanel>
+        <ItemsControl Items="{Binding ActiveRow.Windows}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Name}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <TextBlock Text="-----" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <ItemsControl Items="{Binding WindowRows}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Name}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
-        </DataTemplate>
-      </ItemsControl.ItemTemplate>
-    </ItemsControl>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </StackPanel>
 </Window>
