@@ -15,14 +15,7 @@ namespace NMonad
     {
 //         // private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType).;
 
-//         private static Dictionary<string, Layout> registeredLayout = new Dictionary<string, Layout> {
-//             { "basic", new BasicLayout() },
-//             { "column", new ColumnLayout() },
-//             { "tall", new TallLayout() },
-//             { "fullscreen", new FullscreenLayout() },
-//             { "floating", new FloatingLayout() },
-//             { "wide", new WideLayout() }
-//         };
+
         
 //         private static RuntimeModel Model = new RuntimeModel();
 
@@ -40,10 +33,6 @@ namespace NMonad
 
 
 //             object syncRoot = new object();
-
-//             var config = Configuration.Get<RootConfig>();
-
-//             Model.ActiveLayouts = registeredLayout.Where(kvp => config.Layouts.Contains(kvp.Key)).Select(kvp => kvp.Value).ToList();
 
 
 //             using (new Timer(state =>

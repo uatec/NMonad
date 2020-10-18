@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -52,10 +54,19 @@ namespace MaterialWindows.TaskBar
 
                 // init reflow
 
-                ReflowModel.ActiveLayouts = new System.Collections.Generic.List<Reflow.Layouts.Layout> {
-                    new ColumnLayout()
-                };
+                var config = _configuration.Get<RootConfig>();
 
+                Dictionary<string, Layout> registeredLayout = new Dictionary<string, Layout> {
+                    { "basic", new BasicLayout() },
+                    { "column", new ColumnLayout() },
+                    { "tall", new TallLayout() },
+                    { "fullscreen", new FullscreenLayout() },
+                    { "floating", new FloatingLayout() },
+                    { "wide", new WideLayout() }
+                };
+                
+                ReflowModel.ActiveLayouts = registeredLayout.Where(kvp => config.Layouts.Contains(kvp.Key)).Select(kvp => kvp.Value).ToList();
+                
                 var newWindow = new VerticalBar { DataContext = UIModel };
                 // run reflow
 
