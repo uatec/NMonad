@@ -31,19 +31,12 @@ namespace NMonad
         private static void Main(string[] args)
         {
         }
-//             IConfiguration Configuration = new ConfigurationBuilder()
-//                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-//                 .AddEnvironmentVariables()
-//                 .AddCommandLine(args)
-//                 .Build();
-
 //             log.Info(new
 //             {
 //                 Message = "NMonad Started"
 //             });
-//             Application.EnableVisualStyles();
+            // Application.EnableVisualStyles();
 //             Application.SetCompatibleTextRenderingDefault(false);
-//             var applicationContext = new NMonadApplicationContext();
 
 //             var superkey = Keys.Control | Keys.Alt;
 
