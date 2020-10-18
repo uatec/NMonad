@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 using MaterialWindows.TaskBar.Win32Interop;
+using Window = MaterialWindows.TaskBar.ViewModels.Window;
 
 namespace MaterialWindows.TaskBar.Reflow.Layouts
 {

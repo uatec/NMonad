@@ -1,7 +1,18 @@
+using System;
+
 namespace MaterialWindows.TaskBar.ViewModels
 {
     public class Window
     {
-        public string Name { get; set; } = "! Name not set !";
+        public string Name { get; set; }
+        
+        public IntPtr Handle { get; set; }
+
+        public int X { get; set; }
+        public int Y { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
+
+        public int ScreenId { get; set; }
     }
 }

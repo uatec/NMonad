@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using MaterialWindows.TaskBar.Win32Interop;
+using Window = MaterialWindows.TaskBar.ViewModels.Window;
 
 namespace MaterialWindows.TaskBar.Reflow.Layouts
 {

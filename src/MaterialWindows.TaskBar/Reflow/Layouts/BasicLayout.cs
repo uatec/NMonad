@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using MaterialWindows.TaskBar.Win32Interop;
+using MaterialWindows.TaskBar.ViewModels;
 
 namespace MaterialWindows.TaskBar.Reflow.Layouts
 {

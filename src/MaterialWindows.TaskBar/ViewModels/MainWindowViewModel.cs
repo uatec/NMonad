@@ -1,17 +1,15 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using MaterialWindows.TaskBar.Reflow.Layouts;
 
 namespace MaterialWindows.TaskBar.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
-        public Window FocusedWindow { get; set; }
-        
+        // Layouts
         public List<Layout> ActiveLayouts { get; set; }
 
         public int CurrentLayoutIndex = 0;
-
-        public WindowList Windows = new WindowList();
 
         public Layout CurrentLayout
         {
@@ -21,44 +19,7 @@ namespace MaterialWindows.TaskBar.ViewModels
         public WindowRow ActiveRow => WindowRows[ActiveRowIndex];
         public List<WindowRow> WindowRows { get; set; } = new List<WindowRow>
         {
-            new WindowRow
-            {
-                Name = "Web",
-                Windows = new List<Window> 
-                {
-                    new Window
-                    {
-                        Name = "GMail"
-                    },
-                    new Window
-                    {
-                        Name = "Twitter"
-                    },
-                    new Window
-                    {
-                        Name = "Reuters"
-                    }
-                }
-            },
-            new WindowRow
-            {
-                Name = "Messaging",
-                Windows = new List<Window> 
-                {
-                    new Window
-                    {
-                        Name = "Slack"
-                    },
-                    new Window
-                    {
-                        Name = "Discord"
-                    },
-                    new Window
-                    {
-                        Name = "XChat"
-                    }
-                }
-            }
+            new WindowRow { Name = "Default" }
         };
     }
 }

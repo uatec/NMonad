@@ -10,10 +10,13 @@ namespace MaterialWindows.TaskBar
         private NotifyIcon TrayIcon;
         private ContextMenuStrip TrayIconContextMenu;
         private ToolStripMenuItem CloseMenuItem;
+        private ToolStripMenuItem PrintStateMenuItem;
+        private readonly Actions actions;
 
-        public ThisApplicationContext()
+        public ThisApplicationContext(Actions actions)
         {
             Application.ApplicationExit += new EventHandler(this.OnApplicationExit);
+            this.actions = actions;
             InitializeComponent();
             TrayIcon.Visible = true;
         }
@@ -39,13 +42,16 @@ namespace MaterialWindows.TaskBar
             //Optional - Add a context menu to the TrayIcon:
             TrayIconContextMenu = new ContextMenuStrip();
             CloseMenuItem = new ToolStripMenuItem();
+            PrintStateMenuItem = new ToolStripMenuItem();
             TrayIconContextMenu.SuspendLayout();
 
             // 
             // TrayIconContextMenu
             // 
             this.TrayIconContextMenu.Items.AddRange(new ToolStripItem[] {
-                this.CloseMenuItem});
+                this.PrintStateMenuItem,
+                this.CloseMenuItem
+                });
             this.TrayIconContextMenu.Name = "TrayIconContextMenu";
             this.TrayIconContextMenu.Size = new Size(153, 70);
             // 
@@ -55,6 +61,14 @@ namespace MaterialWindows.TaskBar
             this.CloseMenuItem.Size = new Size(152, 22);
             this.CloseMenuItem.Text = "Close the tray icon program";
             this.CloseMenuItem.Click += new EventHandler(this.CloseMenuItem_Click);
+
+
+            // PrintState Menu Item
+
+            this.PrintStateMenuItem.Name = "PrintStateMenuItem";
+            this.PrintStateMenuItem.Size = new Size(152, 22);
+            this.PrintStateMenuItem.Text = "Print All State";
+            this.PrintStateMenuItem.Click += new EventHandler(this.actions.dumpWindowList);
 
             TrayIconContextMenu.ResumeLayout(false);
             TrayIcon.ContextMenuStrip = TrayIconContextMenu;
