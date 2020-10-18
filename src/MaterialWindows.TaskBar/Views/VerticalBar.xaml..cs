@@ -4,9 +4,9 @@ using Avalonia.Markup.Xaml;
 
 namespace MaterialWindows.TaskBar.Views
 {
-    public class MainWindow : Window
+    public class VerticalBar : Window
     {
-        public MainWindow()
+        public VerticalBar()
         {
             InitializeComponent();
         }

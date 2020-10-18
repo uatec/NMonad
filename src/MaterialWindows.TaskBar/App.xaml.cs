@@ -17,10 +17,15 @@ namespace MaterialWindows.TaskBar
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                desktop.MainWindow = new MainWindow
+                var model = new MainWindowViewModel();
+
+                desktop.MainWindow = new HorizontalBar
                 {
-                    DataContext = new MainWindowViewModel(),
+                    DataContext = model,
                 };
+
+                var newWindow = new VerticalBar { DataContext = model };
+                newWindow.Show();
             }
 
             base.OnFrameworkInitializationCompleted();

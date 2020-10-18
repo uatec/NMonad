@@ -1,0 +1,29 @@
+<Window xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:views="clr-namespace:MaterialWindows.TaskBar.Views"
+    xmlns:vm="clr-namespace:MaterialWindows.TaskBar.ViewModels;assembly=MaterialWindows.TaskBar"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    mc:Ignorable="d"
+    d:DesignWidth="100"
+    Width="75"
+    d:DesignHeight="450"
+    x:Class="MaterialWindows.TaskBar.Views.VerticalBar"
+    Icon="/Assets/avalonia-logo.ico"
+    Title="Vertical Bar">
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <StackPanel>
+        <ItemsControl Items="{Binding WindowRows}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Button Content="{Binding Name}" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <Button Content="+" />
+    </StackPanel>
+</Window>

@@ -3,17 +3,27 @@
     xmlns:views="clr-namespace:MaterialWindows.TaskBar.Views"
     xmlns:vm="clr-namespace:MaterialWindows.TaskBar.ViewModels;assembly=MaterialWindows.TaskBar"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="MaterialWindows.TaskBar.Views.MainWindow" Icon="/Assets/avalonia-logo.ico" Title="MaterialWindows.TaskBar">
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignWidth="800"
+    d:DesignHeight="450"
+    Height="75"
+    x:Class="MaterialWindows.TaskBar.Views.HorizontalBar"
+    Icon="/Assets/avalonia-logo.ico"
+    Title="Horizontal Bar">
 
     <Design.DataContext>
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
-    <StackPanel>
-        <TextBlock Text="--Active Row----" />
-        <views:WindowRow DataContext="{Binding ActiveRow}" />
-        <TextBlock Text="-Rows----" />
-        <ItemsControl Items="{Binding WindowRows}">
+    <StackPanel Orientation="Horizontal">
+        <Button Content="+" />
+        <ItemsControl Items="{Binding ActiveRow.Windows}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Button Content="{Binding Name}" />
@@ -21,7 +31,5 @@
             </ItemsControl.ItemTemplate>
         </ItemsControl>
         <Button Content="+" />
-        <TextBlock Text="---Active Window--" />
-        <TextBlock Text="{Binding ActiveRow.ActiveWindow.Name}" />
     </StackPanel>
 </Window>
