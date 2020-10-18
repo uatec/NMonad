@@ -16,13 +16,11 @@ namespace MaterialWindows.TaskBar
         
         
         private MainWindowViewModel UIModel;
-        private RuntimeModel ReflowModel;
         private ThisApplicationContext applicationContext;
 
-        public SysTrayApp(ThisApplicationContext applicationContext, RuntimeModel reflowModel, MainWindowViewModel uIModel)
+        public SysTrayApp(ThisApplicationContext applicationContext, MainWindowViewModel uIModel)
         {
             this.applicationContext = applicationContext;
-            ReflowModel = reflowModel;
             UIModel = uIModel;
         }
 
@@ -59,7 +57,7 @@ namespace MaterialWindows.TaskBar
             int screenCount = System.Windows.Forms.Screen.AllScreens.Count();
             IntPtr activeWindowHandle = Win32.GetForegroundWindow();
 
-            var activeWindow = ReflowModel.Windows.SingleOrDefault(w => w.Handle == activeWindowHandle);
+            var activeWindow = UIModel.Windows.SingleOrDefault(w => w.Handle == activeWindowHandle);
 
             if (activeWindow == null)
             {
@@ -93,7 +91,7 @@ namespace MaterialWindows.TaskBar
             int screenCount = Screen.AllScreens.Count();
             IntPtr activeWindowHandle = Win32.GetForegroundWindow();
 
-            var activeWindow = ReflowModel.Windows.SingleOrDefault(w => w.Handle == activeWindowHandle);
+            var activeWindow = UIModel.Windows.SingleOrDefault(w => w.Handle == activeWindowHandle);
 
             if (activeWindow == null)
             {
@@ -124,75 +122,75 @@ namespace MaterialWindows.TaskBar
 
         private void dumpWindowList(object sender, EventArgs eventArgs)
         {
-            Console.WriteLine(JsonConvert.SerializeObject(ReflowModel));
+            Console.WriteLine(JsonConvert.SerializeObject(UIModel));
             // log.Info(new  {
             //     Message = "Window List",
-            //     List = ReflowModel.Windows
+            //     List = UIModel.Windows
             // });
         }
         
         private void reverseCycleLayouts(object sender, EventArgs eventArgs)
         {
-            ReflowModel.CurrentLayoutIndex += 1;
-            if (ReflowModel.CurrentLayoutIndex >= ReflowModel.ActiveLayouts.Count) ReflowModel.CurrentLayoutIndex = 0;
+            UIModel.CurrentLayoutIndex += 1;
+            if (UIModel.CurrentLayoutIndex >= UIModel.ActiveLayouts.Count) UIModel.CurrentLayoutIndex = 0;
             // log.Info(new
             // {
             //     Message = "Layout Changed",
-            //     Layout = ReflowModel.CurrentLayout.GetType().Name,
-            //     ReflowModel.CurrentLayout.MainPaneSize,
-            //     ReflowModel.CurrentLayout.MainPaneCount
+            //     Layout = UIModel.CurrentLayout.GetType().Name,
+            //     UIModel.CurrentLayout.MainPaneSize,
+            //     UIModel.CurrentLayout.MainPaneCount
             // });
-            MessageForm.ShowMessage(ReflowModel.CurrentLayout.GetType().Name.Replace("Layout", " Layout"), 1000);
+            MessageForm.ShowMessage(UIModel.CurrentLayout.GetType().Name.Replace("Layout", " Layout"), 1000);
         }
 
         private void cycleLayouts(object sender, EventArgs eventArgs)
         {
-            ReflowModel.CurrentLayoutIndex -= 1;
-            if (ReflowModel.CurrentLayoutIndex == -1) ReflowModel.CurrentLayoutIndex = ReflowModel.ActiveLayouts.Count - 1;
+            UIModel.CurrentLayoutIndex -= 1;
+            if (UIModel.CurrentLayoutIndex == -1) UIModel.CurrentLayoutIndex = UIModel.ActiveLayouts.Count - 1;
             // log.Info(new
             // {
             //     Message = "Layout Changed",
-            //     Layout = ReflowModel.CurrentLayout.GetType().Name,
-            //     ReflowModel.CurrentLayout.MainPaneSize,
-            //     ReflowModel.CurrentLayout.MainPaneCount
+            //     Layout = UIModel.CurrentLayout.GetType().Name,
+            //     UIModel.CurrentLayout.MainPaneSize,
+            //     UIModel.CurrentLayout.MainPaneCount
             // });
-            MessageForm.ShowMessage(ReflowModel.CurrentLayout.GetType().Name.Replace("Layout", " Layout"), 1000);
+            MessageForm.ShowMessage(UIModel.CurrentLayout.GetType().Name.Replace("Layout", " Layout"), 1000);
         }
 
         private void increaseMainPane(object sender, EventArgs eventArgs)
         {
-            ReflowModel.CurrentLayout.MainPaneSize *= 1.1f;
+            UIModel.CurrentLayout.MainPaneSize *= 1.1f;
 
             // log.Info(new
             // {
             //     Message = "Main Pane Size Changed",
-            //     ReflowModel.CurrentLayout.MainPaneSize,
+            //     UIModel.CurrentLayout.MainPaneSize,
             // });
         }
 
         private void decreaseMainPane(object sender, EventArgs eventArgs)
         {
-            ReflowModel.CurrentLayout.MainPaneSize /= 1.1f;
+            UIModel.CurrentLayout.MainPaneSize /= 1.1f;
 
             // log.Info(new
             // {
             //     Message = "Main Pane Size Changed",
-            //     ReflowModel.CurrentLayout.MainPaneSize,
+            //     UIModel.CurrentLayout.MainPaneSize,
             // });
         }
 
         private void cycleMainPane(object sender, EventArgs eventArgs)
         {
-            var lastWindow = ReflowModel.Windows.Last();
-            ReflowModel.Windows.Remove(lastWindow);
-            ReflowModel.Windows.Insert(0, lastWindow);
+            var lastWindow = UIModel.Windows.Last();
+            UIModel.Windows.Remove(lastWindow);
+            UIModel.Windows.Insert(0, lastWindow);
         }
 
         private void reverseCycleMainPane(object sender, EventArgs eventArgs)
         {
-            var firstWindow = ReflowModel.Windows.First();
-            ReflowModel.Windows.RemoveAt(0);
-            ReflowModel.Windows.Add(firstWindow);
+            var firstWindow = UIModel.Windows.First();
+            UIModel.Windows.RemoveAt(0);
+            UIModel.Windows.Add(firstWindow);
         }
     }
 }

@@ -1,13 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using MaterialWindows.TaskBar.Reflow.Layouts;
 
 namespace MaterialWindows.TaskBar.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
-        public string Greeting => "Hello World!";
+        public Window FocusedWindow { get; set; }
+        
+        public List<Layout> ActiveLayouts { get; set; }
 
+        public int CurrentLayoutIndex = 0;
+
+        public WindowList Windows = new WindowList();
+
+        public Layout CurrentLayout
+        {
+            get { return ActiveLayouts[CurrentLayoutIndex]; }
+        }
         public int ActiveRowIndex { get; set; }
         public WindowRow ActiveRow => WindowRows[ActiveRowIndex];
         public List<WindowRow> WindowRows { get; set; } = new List<WindowRow>

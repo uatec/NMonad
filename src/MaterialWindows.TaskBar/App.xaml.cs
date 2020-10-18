@@ -35,7 +35,6 @@ namespace MaterialWindows.TaskBar
         }
         
         private MainWindowViewModel UIModel = new MainWindowViewModel();
-        private RuntimeModel ReflowModel = new RuntimeModel();
         private ThisApplicationContext applicationContext = new ThisApplicationContext();
 
         public override void OnFrameworkInitializationCompleted()
@@ -46,7 +45,7 @@ namespace MaterialWindows.TaskBar
                 Console.WriteLine("init complete");
 
                 // init systray and hotkeys
-                var systrayapp = new SysTrayApp(applicationContext, ReflowModel, UIModel);
+                var systrayapp = new SysTrayApp(applicationContext, UIModel);
                 systrayapp.Init();
 
                 // init UI
@@ -68,7 +67,7 @@ namespace MaterialWindows.TaskBar
                     { "wide", new WideLayout() }
                 };
                 
-                ReflowModel.ActiveLayouts = registeredLayout.Where(kvp => config.Layouts.Contains(kvp.Key)).Select(kvp => kvp.Value).ToList();
+                UIModel.ActiveLayouts = registeredLayout.Where(kvp => config.Layouts.Contains(kvp.Key)).Select(kvp => kvp.Value).ToList();
                 
                 var newWindow = new VerticalBar { DataContext = UIModel };
                 // run reflow
@@ -112,7 +111,7 @@ namespace MaterialWindows.TaskBar
                     extantWindowHandles.Add(ptr);
                 }
 
-                var knownHandles = ReflowModel.Windows.Select(w => w.Handle).ToList();
+                var knownHandles = UIModel.Windows.Select(w => w.Handle).ToList();
                 var oldWindows = knownHandles.Except(extantWindowHandles).ToList();
                 var newWindows = extantWindowHandles.Except(knownHandles).ToList();
 
@@ -123,7 +122,7 @@ namespace MaterialWindows.TaskBar
 
                     string windowName = Win32.GetWindowText(w);
                     // Assign this window to screen 0, or the next screen that doesn't have anything assigned
-                    int screenId = ReflowModel.Windows.Any() ? ReflowModel.Windows.Max(x => x.ScreenId) + 1 : 0;
+                    int screenId = UIModel.Windows.Any() ? UIModel.Windows.Max(x => x.ScreenId) + 1 : 0;
 
                     // if we have tried to assign it to a screen that doesn't exist
                     Dictionary<int, int> screenWindowCounts = new Dictionary<int, int>();
@@ -137,7 +136,7 @@ namespace MaterialWindows.TaskBar
                             screenWindowCounts[i] = 0;
                         }
                         // then update the ones that have windows with the real numbers
-                        var windowGroups = ReflowModel.Windows.GroupBy(x => x.ScreenId);
+                        var windowGroups = UIModel.Windows.GroupBy(x => x.ScreenId);
                         foreach (var wg in windowGroups)
                         {
                             screenWindowCounts[wg.Key] = wg.Count();
@@ -153,7 +152,7 @@ namespace MaterialWindows.TaskBar
                     //     ScreenWindowCounts = JsonConvert.SerializeObject(screenWindowCounts)
                     // });
                     
-                    ReflowModel.Windows.Add(new MaterialWindows.TaskBar.Win32Interop.Window
+                    UIModel.Windows.Add(new MaterialWindows.TaskBar.Win32Interop.Window
                     {
                         Handle = w,
                         Name = windowName,
@@ -163,8 +162,8 @@ namespace MaterialWindows.TaskBar
 
                 foreach (var w in oldWindows)
                 {
-                    var removedWindow = ReflowModel.Windows.Single(w1 => w1.Handle == w);
-                    ReflowModel.Windows.Remove(removedWindow);
+                    var removedWindow = UIModel.Windows.Single(w1 => w1.Handle == w);
+                    UIModel.Windows.Remove(removedWindow);
 
                     Dictionary<int, int> screenWindowCounts = new Dictionary<int, int>();
 
@@ -175,7 +174,7 @@ namespace MaterialWindows.TaskBar
                         screenWindowCounts[i] = 0;
                     }
                     // then update the ones that have windows with the real numbers
-                    var windowGroups = ReflowModel.Windows.GroupBy(x => x.ScreenId);
+                    var windowGroups = UIModel.Windows.GroupBy(x => x.ScreenId);
                     foreach (var wg in windowGroups)
                     {
                         screenWindowCounts[wg.Key] = wg.Count();
@@ -191,7 +190,7 @@ namespace MaterialWindows.TaskBar
                     // });
                 }
 
-                foreach (var windowGroup in ReflowModel.Windows
+                foreach (var windowGroup in UIModel.Windows
                     .GroupBy(x => x.ScreenId))
                 {
                     if (windowGroup.Key >= Screen.AllScreens.Count())
@@ -202,11 +201,11 @@ namespace MaterialWindows.TaskBar
                         //     AttemptedScreenId = windowGroup.Key,
                         //     NumberOfScreens = Screen.AllScreens.Count()
                         // });
-                        ReflowModel.Windows.ForEach(w => w.ScreenId = -1);
+                        UIModel.Windows.ForEach(w => w.ScreenId = -1);
                         return;
                     }
 
-                    ReflowModel.CurrentLayout.ReflowScreen(Screen.AllScreens[windowGroup.Key], windowGroup.ToList(), windowGroup.ToList().SingleOrDefault(w => w.Handle == activeWindow));
+                    UIModel.CurrentLayout.ReflowScreen(Screen.AllScreens[windowGroup.Key], windowGroup.ToList(), windowGroup.ToList().SingleOrDefault(w => w.Handle == activeWindow));
                 }
 
             }
