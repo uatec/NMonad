@@ -1,8 +1,9 @@
 using System;
+using ReactiveUI;
 
 namespace MaterialWindows.TaskBar.ViewModels
 {
-    public class Window
+    public class Window : ReactiveObject
     {
         public string Name { get; set; }
         

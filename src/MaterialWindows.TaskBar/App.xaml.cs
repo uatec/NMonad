@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -68,7 +69,7 @@ namespace MaterialWindows.TaskBar
                     { "wide", new WideLayout() }
                 };
                 
-                UIModel.ActiveLayouts = registeredLayout.Where(kvp => config.Layouts.Contains(kvp.Key)).Select(kvp => kvp.Value).ToList();
+                UIModel.ActiveLayouts = new ObservableCollection<Layout>(registeredLayout.Where(kvp => config.Layouts.Contains(kvp.Key)).Select(kvp => kvp.Value).ToList());
                 
                 var newWindow = new VerticalBar { DataContext = UIModel };
                 // run reflow
@@ -204,7 +205,7 @@ namespace MaterialWindows.TaskBar
                         //     AttemptedScreenId = windowGroup.Key,
                         //     NumberOfScreens = Screen.AllScreens.Count()
                         // });
-                        UIModel.ActiveRow.Windows.ForEach(w => w.ScreenId = -1);
+                        UIModel.ActiveRow.Windows.ToList().ForEach(w => w.ScreenId = -1);
                         return;
                     }
 

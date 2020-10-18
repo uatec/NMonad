@@ -12,6 +12,7 @@
     x:Class="MaterialWindows.TaskBar.Views.VerticalBar"
     Icon="/Assets/avalonia-logo.ico"
     HasSystemDecorations="false"
+    ShowInTaskbar="false"
     Title="Vertical Bar">
 
     <Design.DataContext>

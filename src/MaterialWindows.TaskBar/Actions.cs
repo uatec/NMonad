@@ -86,7 +86,7 @@ namespace MaterialWindows.TaskBar
 
         public void dumpWindowList(object sender, EventArgs eventArgs)
         {
-            MessageBox.Show(JsonConvert.SerializeObject(UIModel.WindowRows, Formatting.Indented), "State");
+            MessageBox.Show(JsonConvert.SerializeObject(UIModel.ActiveRow, Formatting.Indented), "State");
             // Console.WriteLine(JsonConvert.SerializeObject(UIModel.WindowRows, Formatting.Indented));
             // log.Info(new  {
             //     Message = "Window List",
