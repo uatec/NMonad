@@ -6,10 +6,12 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     mc:Ignorable="d"
     d:DesignWidth="100"
-    Width="75"
+    Position="0,50"
+    Width="50"
     d:DesignHeight="450"
     x:Class="MaterialWindows.TaskBar.Views.VerticalBar"
     Icon="/Assets/avalonia-logo.ico"
+    HasSystemDecorations="false"
     Title="Vertical Bar">
 
     <Design.DataContext>
