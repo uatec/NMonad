@@ -61,7 +61,7 @@ namespace MaterialWindows.TaskBar.Reflow.Layouts
                     case 1400: // can't find handle
                         break;
                     default:
-                        Debugger.Break();
+                        // Debugger.Break();
                         break;
                 }
             }
