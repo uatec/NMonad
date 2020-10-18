@@ -3,14 +3,12 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using Newtonsoft.Json;
-using NMonad.Win32Interop;
+using MaterialWindows.TaskBar.Win32Interop;
 
-namespace NMonad.Layouts
+namespace MaterialWindows.TaskBar.Reflow.Layouts
 {
     public abstract class Layout
     {
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
         public abstract void ReflowScreen(Screen screen, List<Window> windows, Window activeWindow);
         /// <summary>
         /// The number of Panes which will be considered primary and be reserved for the top N windows.
@@ -57,7 +55,7 @@ namespace NMonad.Layouts
             {
                 uint error = Win32.GetLastError();
 
-                log.DebugFormat("Error - {0}", error);
+                // log.DebugFormat("Error - {0}", error);
                 switch (error)
                 {
                     case 1400: // can't find handle
@@ -75,12 +73,12 @@ namespace NMonad.Layouts
             window.Width = windowPosition.Width;
             window.Height = windowPosition.Height;
 
-            log.Info(new {
-                Message = "Window Moved",
-                Name = window.Name,
-                From = JsonConvert.SerializeObject(new Rectangle(rect.X, rect.Y, rect.Width - rect.X, rect.Height - rect.Y)),
-                To = JsonConvert.SerializeObject(windowPosition)
-            });
+            // log.Info(new {
+            //     Message = "Window Moved",
+            //     Name = window.Name,
+            //     From = JsonConvert.SerializeObject(new Rectangle(rect.X, rect.Y, rect.Width - rect.X, rect.Height - rect.Y)),
+            //     To = JsonConvert.SerializeObject(windowPosition)
+            // });
         }
         
     }

@@ -2,16 +2,16 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace NMonad
+namespace MaterialWindows.TaskBar
 {
-    class NMonadApplicationContext : ApplicationContext
+    class ThisApplicationContext : ApplicationContext
     {
         //Component declarations
         private NotifyIcon TrayIcon;
         private ContextMenuStrip TrayIconContextMenu;
         private ToolStripMenuItem CloseMenuItem;
 
-        public NMonadApplicationContext()
+        public ThisApplicationContext()
         {
             Application.ApplicationExit += new EventHandler(this.OnApplicationExit);
             InitializeComponent();
@@ -31,7 +31,7 @@ namespace NMonad
 
             //The icon is added to the project resources.
             //Here I assume that the name of the file is 'TrayIcon.ico'
-            TrayIcon.Icon = new Icon("NMonad.ico");
+            TrayIcon.Icon = new Icon("MaterialWindows.TaskBar.ico");
 
             //Optional - handle doubleclicks on the icon:
             TrayIcon.DoubleClick += TrayIcon_DoubleClick;

@@ -1,4 +1,4 @@
-﻿namespace NMonad.Win32Interop
+﻿namespace MaterialWindows.TaskBar.Win32Interop
 {
     public enum UFlags : uint
     {

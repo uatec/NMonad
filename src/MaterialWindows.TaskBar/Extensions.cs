@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace NMonad
+namespace MaterialWindows.TaskBar
 {
     public static class Extensions
     {

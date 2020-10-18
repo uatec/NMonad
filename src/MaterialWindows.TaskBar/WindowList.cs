@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using NMonad.Win32Interop;
+using MaterialWindows.TaskBar.Win32Interop;
 
-namespace NMonad
+namespace MaterialWindows.TaskBar
 {
     public class WindowList : List<Window>
     {

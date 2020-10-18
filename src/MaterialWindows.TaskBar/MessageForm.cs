@@ -1,9 +1,9 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using NMonad.Win32Interop;
+using MaterialWindows.TaskBar.Win32Interop;
 
-namespace NMonad
+namespace MaterialWindows.TaskBar
 {
     public class MessageForm : Form
     {

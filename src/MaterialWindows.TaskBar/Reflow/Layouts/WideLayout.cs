@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using NMonad.Win32Interop;
+using MaterialWindows.TaskBar.Win32Interop;
 
-namespace NMonad.Layouts
+namespace MaterialWindows.TaskBar.Reflow.Layouts
 {
     public class WideLayout : Layout
     {
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
         public override void ReflowScreen(Screen screen, List<Window> windows, Window activeWindow)
         {
             if (windows.Count == 0) return;

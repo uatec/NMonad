@@ -1,4 +1,4 @@
-namespace NMonad
+namespace MaterialWindows.TaskBar
 {
     public class RootConfig
     {

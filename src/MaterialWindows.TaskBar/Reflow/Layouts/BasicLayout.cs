@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using NMonad.Win32Interop;
+using MaterialWindows.TaskBar.Win32Interop;
 
-namespace NMonad.Layouts
+namespace MaterialWindows.TaskBar.Reflow.Layouts
 {
     public class BasicLayout : Layout
     {
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
         public override void ReflowScreen(Screen screen, List<Window> windows, Window activeWindow)
         {
             int width = screen.WorkingArea.Width;
@@ -39,7 +37,7 @@ namespace NMonad.Layouts
                     int windowWidth = colWidth;
                     int windowHeight = cellHeight;
                     
-                    log.DebugFormat("x: {0}, y: {1}, w: {2}, h: {3}", xpos, ypos, windowWidth, windowHeight);
+                    // log.DebugFormat("x: {0}, y: {1}, w: {2}, h: {3}", xpos, ypos, windowWidth, windowHeight);
 
                     base.SetWindowPosition(window, new Rectangle(xpos, ypos, windowWidth, windowHeight));
 

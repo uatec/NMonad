@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace NMonad.Win32Interop
+namespace MaterialWindows.TaskBar.Win32Interop
 {
     public static class Win32
     {

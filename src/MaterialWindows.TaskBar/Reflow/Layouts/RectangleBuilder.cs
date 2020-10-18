@@ -1,6 +1,6 @@
 using System.Drawing;
 
-namespace NMonad.Layouts
+namespace MaterialWindows.TaskBar.Reflow.Layouts
 {
     public class RectangleBuilder
     {

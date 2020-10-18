@@ -6,6 +6,7 @@ using MaterialWindows.TaskBar.Views;
 
 namespace MaterialWindows.TaskBar
 {
+    
     public class App : Application
     {
         public override void Initialize()

@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using NMonad.Win32Interop;
+using MaterialWindows.TaskBar.Win32Interop;
 
-namespace NMonad.Layouts
+namespace MaterialWindows.TaskBar.Reflow.Layouts
 {
     public class TallLayout : Layout
     {

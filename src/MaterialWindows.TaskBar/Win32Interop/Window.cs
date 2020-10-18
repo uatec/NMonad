@@ -1,6 +1,6 @@
 using System;
 
-namespace NMonad.Win32Interop
+namespace MaterialWindows.TaskBar.Win32Interop
 {
     public class Window
     {

@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using NMonad.Layouts;
-using NMonad.Win32Interop;
+using MaterialWindows.TaskBar.Reflow.Layouts;
+using MaterialWindows.TaskBar.Win32Interop;
 
-namespace NMonad
+namespace MaterialWindows.TaskBar
 {
     public class RuntimeModel
     {
