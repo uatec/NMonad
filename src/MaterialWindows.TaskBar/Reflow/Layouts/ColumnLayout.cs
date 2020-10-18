@@ -19,12 +19,13 @@ namespace MaterialWindows.TaskBar.Reflow.Layouts
             for (int windowIndex = 0; windowIndex < windows.Count; ++windowIndex)
             {
                 Window window = windows[windowIndex];
+                // TODO: Inject the working area when we reflow, instead of padding ourselves
                 Rectangle frame = new Rectangle
                 {
-                    X = (int) (screen.WorkingArea.X + windowIndex * windowWidth),
-                    Y = screen.WorkingArea.Y,
-                    Width = (int) windowWidth,
-                    Height = screen.WorkingArea.Height
+                    X = (int) (screen.WorkingArea.X + windowIndex * windowWidth) + 100,
+                    Y = screen.WorkingArea.Y + 100,
+                    Width = (int) windowWidth - 100,
+                    Height = screen.WorkingArea.Height - 100
                 };
 
                 base.SetWindowPosition(window, frame);
