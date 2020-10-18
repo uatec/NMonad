@@ -4,7 +4,7 @@ using System.Windows.Forms;
 
 namespace MaterialWindows.TaskBar
 {
-    class ThisApplicationContext : ApplicationContext
+    public class ThisApplicationContext : ApplicationContext
     {
         //Component declarations
         private NotifyIcon TrayIcon;

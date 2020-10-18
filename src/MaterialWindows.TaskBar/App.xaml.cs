@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using MaterialWindows.TaskBar.Reflow.Layouts;
 using MaterialWindows.TaskBar.ViewModels;
 using MaterialWindows.TaskBar.Views;
 using Microsoft.Extensions.Configuration;
@@ -27,6 +28,10 @@ namespace MaterialWindows.TaskBar
         {
             AvaloniaXamlLoader.Load(this);
         }
+        
+        private MainWindowViewModel UIModel = new MainWindowViewModel();
+        private RuntimeModel ReflowModel = new RuntimeModel();
+        private ThisApplicationContext applicationContext = new ThisApplicationContext();
 
         public override void OnFrameworkInitializationCompleted()
         {
@@ -34,26 +39,32 @@ namespace MaterialWindows.TaskBar
             {
 
                 Console.WriteLine("init complete");
-                // reflow model
 
-                // UI model
-                var model = new MainWindowViewModel();
+                // init systray and hotkeys
+                var systrayapp = new SysTrayApp(applicationContext, ReflowModel, UIModel);
+                systrayapp.Init();
 
+                // init UI
+                desktop.MainWindow = new HorizontalBar
+                {
+                    DataContext = UIModel,
+                };
+
+                // init reflow
+
+                ReflowModel.ActiveLayouts = new System.Collections.Generic.List<Reflow.Layouts.Layout> {
+                    new ColumnLayout()
+                };
+
+                var newWindow = new VerticalBar { DataContext = UIModel };
                 // run reflow
 
                 // run systray
 
-                var applicationContext = new ThisApplicationContext();
-                applicationContext.ThreadExit += (object sender, EventArgs e) => desktop.Shutdown(0);
-                Task.Run(() => System.Windows.Forms.Application.Run(applicationContext));
+                systrayapp.Run();
+
                 // run ui
 
-                desktop.MainWindow = new HorizontalBar
-                {
-                    DataContext = model,
-                };
-
-                var newWindow = new VerticalBar { DataContext = model };
                 newWindow.Show();
             }
 
