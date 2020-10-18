@@ -163,35 +163,35 @@ namespace MaterialWindows.TaskBar
                     });
                 }
 
-                // foreach (var w in oldWindows)
-                // {
-                //     var removedWindow = UIModel.Windows.Single(w1 => w1.Handle == w);
-                //     UIModel.Windows.Remove(removedWindow);
+                foreach (var w in oldWindows)
+                {
+                    var removedWindow = UIModel.ActiveRow.Windows.Single(w1 => w1.Handle == w);
+                    UIModel.ActiveRow.Windows.Remove(removedWindow);
 
-                //     Dictionary<int, int> screenWindowCounts = new Dictionary<int, int>();
+                    Dictionary<int, int> screenWindowCounts = new Dictionary<int, int>();
 
-                //     // figure out how many windows each screen has
-                //     // create entries for all screens that default to zero
-                //     for (int i = 0; i < Screen.AllScreens.Length; i++)
-                //     {
-                //         screenWindowCounts[i] = 0;
-                //     }
-                //     // then update the ones that have windows with the real numbers
-                //     var windowGroups = UIModel.Windows.GroupBy(x => x.ScreenId);
-                //     foreach (var wg in windowGroups)
-                //     {
-                //         screenWindowCounts[wg.Key] = wg.Count();
-                //     }
+                    // figure out how many windows each screen has
+                    // create entries for all screens that default to zero
+                    for (int i = 0; i < Screen.AllScreens.Length; i++)
+                    {
+                        screenWindowCounts[i] = 0;
+                    }
+                    // then update the ones that have windows with the real numbers
+                    var windowGroups = UIModel.ActiveRow.Windows.GroupBy(x => x.ScreenId);
+                    foreach (var wg in windowGroups)
+                    {
+                        screenWindowCounts[wg.Key] = wg.Count();
+                    }
 
-                //     // log.Info(new
-                //     // {
-                //     //     Message = "Window Removed",
-                //     //     removedWindow.ScreenId,
-                //     //     removedWindow.Name,
-                //     //     remainWindows = Model.Windows.Count(w2 => w2.ScreenId == removedWindow.ScreenId),
-                //     //     ScreenWindowCounts = JsonConvert.SerializeObject(screenWindowCounts)
-                //     // });
-                // }
+                    // log.Info(new
+                    // {
+                    //     Message = "Window Removed",
+                    //     removedWindow.ScreenId,
+                    //     removedWindow.Name,
+                    //     remainWindows = Model.Windows.Count(w2 => w2.ScreenId == removedWindow.ScreenId),
+                    //     ScreenWindowCounts = JsonConvert.SerializeObject(screenWindowCounts)
+                    // });
+                }
 
                 foreach (var windowGroup in UIModel.ActiveRow.Windows
                     .GroupBy(x => x.ScreenId))
