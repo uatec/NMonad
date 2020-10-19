@@ -67,7 +67,7 @@ namespace MaterialWindows.TaskBar.Win32Interop
         public static extern bool IsWindowVisible(IntPtr hWnd);
 
         [DllImport("user32.dll")]
-        public static extern IntPtr GetActiveWindow();
+        public static extern IntPtr GetFocus();
 
         public static string GetWindowText(IntPtr hWnd)
         {
@@ -126,5 +126,7 @@ namespace MaterialWindows.TaskBar.Win32Interop
 
         [DllImport("user32.dll")]
         public static extern IntPtr GetForegroundWindow();
+        [DllImport("user32.dll")]
+        public static extern bool SetForegroundWindow(IntPtr hWnd);
     }
 }

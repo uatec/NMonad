@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -63,6 +62,7 @@ namespace MaterialWindows.TaskBar
                 Dictionary<string, Layout> registeredLayout = new Dictionary<string, Layout> {
                     { "basic", new BasicLayout() },
                     { "column", new ColumnLayout() },
+                    { "twocolumn", new TwoColumnLayout() },
                     { "tall", new TallLayout() },
                     { "fullscreen", new FullscreenLayout() },
                     { "floating", new FloatingLayout() },
@@ -73,15 +73,14 @@ namespace MaterialWindows.TaskBar
                 
                 var newWindow = new VerticalBar { DataContext = UIModel };
                 // run reflow
-                object syncRoot = new object();
-                new Timer(state =>
-                    {
-                        if (Monitor.TryEnter(syncRoot, 100))
-                        {
-                            ReflowStep(config);
-                            Monitor.Exit(syncRoot);
-                        }
-                    }, null, 0, 100);
+                
+                Task.Run(async () => {
+                    do {
+                        ReflowStep(config);
+                        await Task.Delay(100);
+                    } while ( true );
+                });
+
                 // run systray
 
                 Task.Run(() => System.Windows.Forms.Application.Run(applicationContext));
@@ -99,7 +98,7 @@ namespace MaterialWindows.TaskBar
             // try
             {
                 List<IntPtr> extantWindowHandles = new List<IntPtr>();
-                IntPtr activeWindow = Win32.GetActiveWindow();
+                IntPtr activeWindow = Win32.GetForegroundWindow();
 
                 foreach (IntPtr ptr in Win32.GetAllWindows())
                 {
@@ -108,20 +107,22 @@ namespace MaterialWindows.TaskBar
                     //if (ignoredWindows.Any(w => -1 < windowName.IndexOf(w, StringComparison.CurrentCultureIgnoreCase))) continue;
                     if (config.ExcludedWindows.Contains(windowName)) continue;
                     if (!Win32.IsWindowVisible(ptr)) continue;
-                    if (Win32.IsIconic(ptr)) continue;
+                    // if (Win32.IsIconic(ptr)) continue;
+                    // if (WindowsIsSmall(ptr)) continue;
                     
                     extantWindowHandles.Add(ptr);
                 }
 
-                var knownHandles = UIModel.WindowRows.SelectMany(r => r.Windows).Select(w => w.Handle).ToList();
+                Console.Write("extant windows " + extantWindowHandles.Count);
+                var knownHandles = UIModel.ActiveRow.Windows.Select(w => w.Handle).ToList();
+                Console.WriteLine("Known Windows " + knownHandles.Count);
                 var oldWindows = knownHandles.Except(extantWindowHandles).ToList();
+                Console.WriteLine("Removed Windows " + oldWindows.Count);
                 var newWindows = extantWindowHandles.Except(knownHandles).ToList();
+                Console.WriteLine("New windows " + newWindows.Count);
 
                 foreach (var w in newWindows)
                 {
-                    // Only ignore small windows if they're added. If an existing window becomes small we still want to control it... i suspect
-                    if (WindowsIsSmall(w)) continue;
-
                     string windowName = Win32.GetWindowText(w);
                     // Assign this window to screen 0, or the next screen that doesn't have anything assigned
                     // int screenId = UIModel.Windows.Any() ? UIModel.Windows.Max(x => x.ScreenId) + 1 : 0;
@@ -129,25 +130,25 @@ namespace MaterialWindows.TaskBar
                     int screenId = 0;
 
                     // if we have tried to assign it to a screen that doesn't exist
-                    Dictionary<int, int> screenWindowCounts = new Dictionary<int, int>();
-                    if (screenId >= Screen.AllScreens.Length)
-                    {
+                    // Dictionary<int, int> screenWindowCounts = new Dictionary<int, int>();
+                    // if (screenId >= Screen.AllScreens.Length)
+                    // {
 
-                        // figure out how many windows each screen has
-                        // create entries for all screens that default to zero
-                        for (int i = 0; i < Screen.AllScreens.Length; i++)
-                        {
-                            screenWindowCounts[i] = 0;
-                        }
-                        // then update the ones that have windows with the real numbers
-                        var windowGroups = UIModel.ActiveRow.Windows.GroupBy(x => x.ScreenId);
-                        foreach (var wg in windowGroups)
-                        {
-                            screenWindowCounts[wg.Key] = wg.Count();
-                        }
-                        // and assign this window to the screen with the fewest windows
-                        screenId = screenWindowCounts.OrderBy(kvp => kvp.Value).First().Key;
-                    }
+                    //     // figure out how many windows each screen has
+                    //     // create entries for all screens that default to zero
+                    //     for (int i = 0; i < Screen.AllScreens.Length; i++)
+                    //     {
+                    //         screenWindowCounts[i] = 0;
+                    //     }
+                    //     // then update the ones that have windows with the real numbers
+                    //     var windowGroups = UIModel.ActiveRow.Windows.GroupBy(x => x.ScreenId);
+                    // #    foreach (var wg in windowGroups)
+                    //     {
+                    //         screenWindowCounts[wg.Key] = wg.Count();
+                    //     }
+                    //     // and assign this window to the screen with the fewest windows
+                    //     screenId = screenWindowCounts.OrderBy(kvp => kvp.Value).First().Key;
+                    // }
                     // log.Info(new
                     // {
                     //     Message = "Window Added",
@@ -155,7 +156,7 @@ namespace MaterialWindows.TaskBar
                     //     windowName,
                     //     ScreenWindowCounts = JsonConvert.SerializeObject(screenWindowCounts)
                     // });
-                    
+                    Console.WriteLine("added " + windowName);
                     UIModel.ActiveRow.Windows.Add(new Window 
                     {
                         Handle = w,
@@ -169,20 +170,20 @@ namespace MaterialWindows.TaskBar
                     var removedWindow = UIModel.ActiveRow.Windows.Single(w1 => w1.Handle == w);
                     UIModel.ActiveRow.Windows.Remove(removedWindow);
 
-                    Dictionary<int, int> screenWindowCounts = new Dictionary<int, int>();
+                    // Dictionary<int, int> screenWindowCounts = new Dictionary<int, int>();
 
-                    // figure out how many windows each screen has
-                    // create entries for all screens that default to zero
-                    for (int i = 0; i < Screen.AllScreens.Length; i++)
-                    {
-                        screenWindowCounts[i] = 0;
-                    }
-                    // then update the ones that have windows with the real numbers
-                    var windowGroups = UIModel.ActiveRow.Windows.GroupBy(x => x.ScreenId);
-                    foreach (var wg in windowGroups)
-                    {
-                        screenWindowCounts[wg.Key] = wg.Count();
-                    }
+                    // // figure out how many windows each screen has
+                    // // create entries for all screens that default to zero
+                    // for (int i = 0; i < Screen.AllScreens.Length; i++)
+                    // {
+                    //     screenWindowCounts[i] = 0;
+                    // }
+                    // // then update the ones that have windows with the real numbers
+                    // var windowGroups = UIModel.ActiveRow.Windows.GroupBy(x => x.ScreenId);
+                    // foreach (var wg in windowGroups)
+                    // {
+                    //     screenWindowCounts[wg.Key] = wg.Count();
+                    // }
 
                     // log.Info(new
                     // {
@@ -193,28 +194,29 @@ namespace MaterialWindows.TaskBar
                     //     ScreenWindowCounts = JsonConvert.SerializeObject(screenWindowCounts)
                     // });
                 }
-
-                foreach (var windowGroup in UIModel.ActiveRow.Windows
-                    .GroupBy(x => x.ScreenId))
-                {
-                    if (windowGroup.Key >= Screen.AllScreens.Count())
-                    {
-                        // log.Warn(new
-                        // {
-                        //     Message = "Invalid screen Id - Suspected screen count change, reassigning windows to screens and reflowing.",
-                        //     AttemptedScreenId = windowGroup.Key,
-                        //     NumberOfScreens = Screen.AllScreens.Count()
-                        // });
-                        UIModel.ActiveRow.Windows.ToList().ForEach(w => w.ScreenId = -1);
-                        return;
-                    }
-
-                    UIModel.CurrentLayout.ReflowScreen(Screen.AllScreens[windowGroup.Key], windowGroup.ToList(), windowGroup.ToList().SingleOrDefault(w => w.Handle == activeWindow));
-                }
+                // TODO: Restore multi-screen
+                // foreach (var windowGroup in UIModel.ActiveRow.Windows
+                //     .GroupBy(x => x.ScreenId))
+                // {
+                //     if (windowGroup.Key >= Screen.AllScreens.Count())
+                //     {
+                //         // log.Warn(new
+                //         // {
+                //         //     Message = "Invalid screen Id - Suspected screen count change, reassigning windows to screens and reflowing.",
+                //         //     AttemptedScreenId = windowGroup.Key,
+                //         //     NumberOfScreens = Screen.AllScreens.Count()
+                //         // });
+                //         UIModel.ActiveRow.Windows.ToList().ForEach(w => w.ScreenId = -1);
+                //         return;
+                //     }
+                // }
+                // Console.WriteLine($"active window {activeWindow}");
+                Console.WriteLine(UIModel.ActiveRow.Windows.Count);
+                UIModel.CurrentLayout.ReflowScreen(Screen.PrimaryScreen, UIModel.ActiveRow.Windows.ToList(), UIModel.ActiveRow.Windows.ToList().SingleOrDefault(w => w.Handle == activeWindow));
 
             }
             // catch (Exception ex)
-            // {
+            // { 
             //     log.Fatal("unhandled fatal exception", ex);
             //     throw;
             // }

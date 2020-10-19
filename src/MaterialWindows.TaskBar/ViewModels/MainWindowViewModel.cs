@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
+using Avalonia.Interactivity;
 using MaterialWindows.TaskBar.Reflow.Layouts;
 using ReactiveUI;
 
@@ -41,5 +43,11 @@ namespace MaterialWindows.TaskBar.ViewModels
         {
             new WindowRow { Name = "Default" }
         };
+
+        
+        public void ActivateWindowCommand(object sender, RoutedEventArgs e)
+        {
+            Debugger.Break();
+        }
     }
 }
